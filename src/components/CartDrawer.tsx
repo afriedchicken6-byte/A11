@@ -84,8 +84,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
       return;
     }
 
-    if (orderType === 'delivery' && (!deliveryAddress.trim() || deliveryAddress.trim().length < 5)) {
-      setValidationError('يرجى إدخال العنوان بالتفصيل لضمان سرعة التوصيل.');
+    if (!deliveryAddress.trim() || deliveryAddress.trim().length < 5) {
+      setValidationError('يرجى إدخال عنوان العميل بالتفصيل، وهو مطلوب لكل الطلبات سواء تيك أواي أو دليفري.');
       return;
     }
 
@@ -359,31 +359,28 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 />
               </div>
 
-              {orderType === 'delivery' && (
-                <>
-                  <div>
-                    <label className="block text-xs text-stone-400 mb-1">العنوان بالتفصيل *</label>
-                    <textarea
-                      rows={2}
-                      value={deliveryAddress}
-                      onChange={(e) => setDeliveryAddress(e.target.value)}
-                      placeholder="اسم الشارع، رقم العمارة، رقم الدور والشقة..."
-                      className={inputClass}
-                    />
-                  </div>
+              <div>
+                <label className="block text-xs text-stone-400 mb-1">العنوان بالتفصيل *</label>
+                <textarea
+                  rows={2}
+                  required
+                  value={deliveryAddress}
+                  onChange={(e) => setDeliveryAddress(e.target.value)}
+                  placeholder="اسم الشارع، رقم العمارة، رقم الدور والشقة..."
+                  className={inputClass}
+                />
+              </div>
 
-                  <div>
-                    <label className="block text-xs text-stone-400 mb-1">علامة مميزة (اختياري)</label>
-                    <input
-                      type="text"
-                      value={landmark}
-                      onChange={(e) => setLandmark(e.target.value)}
-                      placeholder="بجوار صيدلية، أمام المسجد..."
-                      className={inputClass}
-                    />
-                  </div>
-                </>
-              )}
+              <div>
+                <label className="block text-xs text-stone-400 mb-1">علامة مميزة (اختياري)</label>
+                <input
+                  type="text"
+                  value={landmark}
+                  onChange={(e) => setLandmark(e.target.value)}
+                  placeholder="بجوار صيدلية، أمام المسجد..."
+                  className={inputClass}
+                />
+              </div>
 
               <div>
                 <label className="block text-xs text-stone-400 mb-1">ملاحظات عامة للأوردر</label>
