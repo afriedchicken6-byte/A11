@@ -96,6 +96,7 @@ export async function submitOrderWithDailyCounter(
         customerName: orderInput.customerName.trim(),
         customerPhone: orderInput.customerPhone.trim(),
         deliveryAddress: orderInput.deliveryAddress?.trim() || '',
+        pickupTime: orderInput.pickupTime?.trim() || '',
         landmark: orderInput.landmark?.trim() || '',
         orderNotes: orderInput.orderNotes?.trim() || '',
         items: cleanItems(orderInput.items),
@@ -139,6 +140,7 @@ export function buildWhatsAppMessage(order: {
   customerName: string;
   customerPhone: string;
   deliveryAddress?: string;
+  pickupTime?: string;
   landmark?: string;
   orderNotes?: string;
   items: {
@@ -173,9 +175,13 @@ export function buildWhatsAppMessage(order: {
   message += `الاسم: ${order.customerName}\n`;
   message += `الموبايل: ${order.customerPhone}\n`;
 
-  message += `العنوان: ${order.deliveryAddress || 'غير محدد'}\n`;
-  if (order.landmark) {
-    message += `علامة مميزة: ${order.landmark}\n`;
+  if (isDelivery) {
+    message += `العنوان: ${order.deliveryAddress || 'غير محدد'}\n`;
+    if (order.landmark) {
+      message += `علامة مميزة: ${order.landmark}\n`;
+    }
+  } else if (order.pickupTime) {
+    message += `وقت الاستلام: ${order.pickupTime}\n`;
   }
 
   message += `----------------\n`;
