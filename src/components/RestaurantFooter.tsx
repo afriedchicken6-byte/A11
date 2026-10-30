@@ -1,12 +1,8 @@
 import React from 'react';
-import { Phone, ExternalLink, MapPin, Clock, ShieldCheck, Heart, MessageCircle, Code2 } from 'lucide-react';
+import { Phone, ExternalLink, MapPin, Clock, Heart, MessageCircle, Code2 } from 'lucide-react';
 import { RESTAURANT_INFO } from '../data/menuData';
 
-interface RestaurantFooterProps {
-  onOpenAdmin: () => void;
-}
-
-export const RestaurantFooter: React.FC<RestaurantFooterProps> = ({ onOpenAdmin }) => {
+export const RestaurantFooter: React.FC = () => {
   const developerWhatsappUrl =
     'https://wa.me/201159615794?text=' +
     encodeURIComponent('مرحبا مروان، تواصلت معك بخصوص تطوير موقع أو منيو إلكتروني');
@@ -76,13 +72,6 @@ export const RestaurantFooter: React.FC<RestaurantFooterProps> = ({ onOpenAdmin 
                 <span className="font-semibold">صفحتنا على فيسبوك</span>
               </a>
 
-              <button
-                onClick={onOpenAdmin}
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-stone-900 border border-stone-800 text-stone-400 hover:text-amber-400 transition-colors w-fit"
-              >
-                <ShieldCheck className="w-4 h-4 text-amber-400" />
-                <span>لوحة تحكم إدارة المطعم</span>
-              </button>
             </div>
           </div>
         </div>
