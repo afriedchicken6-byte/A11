@@ -1,12 +1,11 @@
 import React from 'react';
-import { ShoppingBag, Phone, ShieldCheck, Facebook } from 'lucide-react';
+import { ShoppingBag, Phone, Facebook } from 'lucide-react';
 import { RESTAURANT_INFO } from '../data/menuData';
 
 interface TopHeaderProps {
   cartCount: number;
   cartTotal: number;
   onOpenCart: () => void;
-  onOpenAdmin: () => void;
   onGoHome: () => void;
 }
 
@@ -14,7 +13,6 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
   cartCount,
   cartTotal,
   onOpenCart,
-  onOpenAdmin,
   onGoHome
 }) => {
   return (
@@ -42,7 +40,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
           </div>
         </button>
 
-        {/* Actions: Call, Admin & Cart */}
+        {/* Actions: Call & Cart */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           {/* Facebook page */}
           <a
@@ -66,14 +64,6 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
             <span className="hidden md:inline font-mono">{RESTAURANT_INFO.phone}</span>
           </a>
 
-          {/* Admin Toggle */}
-          <button
-            onClick={onOpenAdmin}
-            title="لوحة الإدارة"
-            className="p-2 rounded-lg bg-white/[0.04] border border-[#E3B75B]/20 text-stone-400 hover:text-amber-400 hover:border-[#E3B75B]/50 transition-colors"
-          >
-            <ShieldCheck className="w-4 h-4" />
-          </button>
 
           {/* Cart Button (id used by the fly-to-cart animation) */}
           <button
