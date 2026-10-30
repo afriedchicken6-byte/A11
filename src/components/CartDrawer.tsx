@@ -396,8 +396,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 <div>
                   <label className="block text-xs text-stone-400 mb-1">وقت الاستلام من المطعم *</label>
                   <input
-                    type="time"
+                    type="text"
                     required
+                    placeholder="مثال: الساعة ٨ مساءً أو بعد نصف ساعة"
                     value={pickupTime}
                     onChange={(e) => setPickupTime(e.target.value)}
                     className={inputClass}
