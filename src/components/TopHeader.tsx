@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShoppingBag, Phone, ShieldCheck } from 'lucide-react';
+import { ShoppingBag, Phone, ShieldCheck, Facebook } from 'lucide-react';
 import { RESTAURANT_INFO } from '../data/menuData';
 
 interface TopHeaderProps {
@@ -44,6 +44,18 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
 
         {/* Actions: Call, Admin & Cart */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          {/* Facebook page */}
+          <a
+            href={RESTAURANT_INFO.facebookUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="صفحتنا على فيسبوك"
+            aria-label="صفحتنا على فيسبوك"
+            className="p-2 rounded-lg bg-[#1877F2]/10 border border-[#1877F2]/30 text-[#1877F2] hover:bg-[#1877F2]/20 transition-colors"
+          >
+            <Facebook className="w-4 h-4" />
+          </a>
+
           {/* Quick Call */}
           <a
             href={`tel:${RESTAURANT_INFO.phone}`}
