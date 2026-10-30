@@ -19,7 +19,6 @@ import { ProductBottomSheet } from './components/ProductBottomSheet';
 import { CartDrawer } from './components/CartDrawer';
 import { OrderSuccessModal } from './components/OrderSuccessModal';
 import type { SuccessOrderData } from './components/OrderSuccessModal';
-import { AdminDashboard } from './components/AdminDashboard';
 import { RestaurantFooter } from './components/RestaurantFooter';
 import { LuxuryBackground } from './components/LuxuryBackground';
 import { Reveal } from './components/Reveal';
@@ -27,7 +26,6 @@ import { db, doc, onSnapshot } from './lib/firebase';
 import { flyToCart, initRipple, vibrate } from './lib/interactions';
 
 export default function App() {
-  const [showAdmin, setShowAdmin] = useState<boolean>(false);
   const [activeCategory, setActiveCategory] = useState<string>('crispy-meals');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedItemForModal, setSelectedItemForModal] = useState<MenuItem | null>(null);
@@ -247,17 +245,6 @@ export default function App() {
     }
   };
 
-  // If user opens Admin Dashboard
-  if (showAdmin) {
-    return (
-      <AdminDashboard
-        onBackToMenu={() => setShowAdmin(false)}
-        deliveryFee={deliveryFee}
-        onUpdateDeliveryFee={(newFee) => setDeliveryFee(newFee)}
-      />
-    );
-  }
-
   return (
     <div className="min-h-screen text-white relative">
       {/* Dark luxury backdrop: obsidian + burgundy/gold glows + embers */}
@@ -271,7 +258,6 @@ export default function App() {
         cartCount={totalCartCount}
         cartTotal={totalCartPrice}
         onOpenCart={() => setIsCartOpen(true)}
-        onOpenAdmin={() => setShowAdmin(true)}
         onGoHome={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
       />
 
@@ -457,7 +443,7 @@ export default function App() {
       />
 
       {/* Footer */}
-      <RestaurantFooter onOpenAdmin={() => setShowAdmin(true)} />
+      <RestaurantFooter />
     </div>
   );
 }
