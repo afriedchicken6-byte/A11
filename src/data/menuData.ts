@@ -418,6 +418,7 @@ export interface CustomerOrder {
   customerName: string;
   customerPhone: string;
   deliveryAddress?: string;
+  pickupTime?: string;
   landmark?: string;
   orderNotes?: string;
   items: {
