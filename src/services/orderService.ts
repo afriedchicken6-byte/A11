@@ -173,11 +173,9 @@ export function buildWhatsAppMessage(order: {
   message += `الاسم: ${order.customerName}\n`;
   message += `الموبايل: ${order.customerPhone}\n`;
 
-  if (isDelivery) {
-    message += `العنوان: ${order.deliveryAddress || 'غير محدد'}\n`;
-    if (order.landmark) {
-      message += `علامة مميزة: ${order.landmark}\n`;
-    }
+  message += `العنوان: ${order.deliveryAddress || 'غير محدد'}\n`;
+  if (order.landmark) {
+    message += `علامة مميزة: ${order.landmark}\n`;
   }
 
   message += `----------------\n`;
