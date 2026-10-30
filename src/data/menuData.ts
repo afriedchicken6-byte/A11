@@ -36,7 +36,7 @@ export interface MenuCategory {
 export const RESTAURANT_INFO = {
   name: 'A1 Burger & Best Fried Chicken',
   phone: '01055450417',
-  whatsappNumber: '201055450417',
+  whatsappNumber: '201154035012',
   address: 'شارع طه حسين، ميدان قصر الثقافة، أمام فيس تو فيس',
   facebookUrl: 'https://www.facebook.com/share/19otzT6Gyj/',
   defaultDeliveryFee: 20,
