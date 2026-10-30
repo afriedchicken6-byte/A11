@@ -54,6 +54,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   const [customerName, setCustomerName] = useState<string>('');
   const [customerPhone, setCustomerPhone] = useState<string>('');
   const [deliveryAddress, setDeliveryAddress] = useState<string>('');
+  const [pickupTime, setPickupTime] = useState<string>('');
   const [landmark, setLandmark] = useState<string>('');
   const [orderNotes, setOrderNotes] = useState<string>('');
   const [validationError, setValidationError] = useState<string | null>(null);
@@ -84,8 +85,13 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
       return;
     }
 
-    if (!deliveryAddress.trim() || deliveryAddress.trim().length < 5) {
-      setValidationError('يرجى إدخال عنوان العميل بالتفصيل، وهو مطلوب لكل الطلبات سواء تيك أواي أو دليفري.');
+    if (orderType === 'delivery' && (!deliveryAddress.trim() || deliveryAddress.trim().length < 5)) {
+      setValidationError('يرجى إدخال عنوان التوصيل بالتفصيل.');
+      return;
+    }
+
+    if (orderType === 'takeaway' && !pickupTime) {
+      setValidationError('يرجى تحديد وقت استلام الطلب من المطعم.');
       return;
     }
 
@@ -118,8 +124,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
         orderType,
         customerName: customerName.trim(),
         customerPhone: cleanPhone,
-        deliveryAddress: deliveryAddress.trim(),
-        landmark: landmark.trim(),
+        deliveryAddress: orderType === 'delivery' ? deliveryAddress.trim() : '',
+        pickupTime: orderType === 'takeaway' ? pickupTime : '',
+        landmark: orderType === 'delivery' ? landmark.trim() : '',
         orderNotes: orderNotes.trim(),
         items,
         deliveryFee: currentDeliveryFee,
@@ -359,28 +366,44 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 />
               </div>
 
-              <div>
-                <label className="block text-xs text-stone-400 mb-1">العنوان بالتفصيل *</label>
-                <textarea
-                  rows={2}
-                  required
-                  value={deliveryAddress}
-                  onChange={(e) => setDeliveryAddress(e.target.value)}
-                  placeholder="اسم الشارع، رقم العمارة، رقم الدور والشقة..."
-                  className={inputClass}
-                />
-              </div>
+              {orderType === 'delivery' ? (
+                <>
+                  <div>
+                    <label className="block text-xs text-stone-400 mb-1">عنوان التوصيل بالتفصيل *</label>
+                    <textarea
+                      rows={2}
+                      required
+                      value={deliveryAddress}
+                      onChange={(e) => setDeliveryAddress(e.target.value)}
+                      placeholder="اسم الشارع، رقم العمارة، رقم الدور والشقة..."
+                      className={inputClass}
+                    />
+                  </div>
 
-              <div>
-                <label className="block text-xs text-stone-400 mb-1">علامة مميزة (اختياري)</label>
-                <input
-                  type="text"
-                  value={landmark}
-                  onChange={(e) => setLandmark(e.target.value)}
-                  placeholder="بجوار صيدلية، أمام المسجد..."
-                  className={inputClass}
-                />
-              </div>
+                  <div>
+                    <label className="block text-xs text-stone-400 mb-1">علامة مميزة (اختياري)</label>
+                    <input
+                      type="text"
+                      value={landmark}
+                      onChange={(e) => setLandmark(e.target.value)}
+                      placeholder="بجوار صيدلية، أمام المسجد..."
+                      className={inputClass}
+                    />
+                  </div>
+                </>
+              ) : (
+                <div>
+                  <label className="block text-xs text-stone-400 mb-1">وقت الاستلام من المطعم *</label>
+                  <input
+                    type="time"
+                    required
+                    value={pickupTime}
+                    onChange={(e) => setPickupTime(e.target.value)}
+                    className={inputClass}
+                  />
+                  <p className="text-[11px] text-stone-500 mt-1">لطلب التيك أواي: الاسم ورقم الموبايل ووقت الاستلام فقط.</p>
+                </div>
+              )}
 
               <div>
                 <label className="block text-xs text-stone-400 mb-1">ملاحظات عامة للأوردر</label>
