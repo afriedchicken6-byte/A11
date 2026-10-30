@@ -1,9 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   Search,
-  ShoppingBag,
-  Sparkles,
-  Phone,
   Flame,
   CheckCircle2,
   ChevronUp
@@ -15,19 +12,21 @@ import {
   CartItem,
   RESTAURANT_INFO
 } from './data/menuData';
-import { WelcomeSplash } from './components/WelcomeSplash';
 import { TopHeader } from './components/TopHeader';
 import { CategoryRibbons } from './components/CategoryRibbons';
 import { MenuItemCard } from './components/MenuItemCard';
 import { ProductBottomSheet } from './components/ProductBottomSheet';
 import { CartDrawer } from './components/CartDrawer';
 import { OrderSuccessModal } from './components/OrderSuccessModal';
+import type { SuccessOrderData } from './components/OrderSuccessModal';
 import { AdminDashboard } from './components/AdminDashboard';
 import { RestaurantFooter } from './components/RestaurantFooter';
+import { LuxuryBackground } from './components/LuxuryBackground';
+import { Reveal } from './components/Reveal';
 import { db, doc, onSnapshot } from './lib/firebase';
+import { flyToCart, initRipple, vibrate } from './lib/interactions';
 
 export default function App() {
-  const [showSplash, setShowSplash] = useState<boolean>(true);
   const [showAdmin, setShowAdmin] = useState<boolean>(false);
   const [activeCategory, setActiveCategory] = useState<string>('crispy-meals');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -38,14 +37,11 @@ export default function App() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [showBackToTop, setShowBackToTop] = useState<boolean>(false);
 
+  const progressRef = useRef<HTMLDivElement>(null);
+  const toastTimer = useRef<number | undefined>(undefined);
+
   // Success modal state
-  const [successOrderData, setSuccessOrderData] = useState<{
-    orderNumber: number;
-    customerName: string;
-    totalAmount: number;
-    orderType: 'takeaway' | 'delivery';
-    whatsappUrl: string;
-  } | null>(null);
+  const [successOrderData, setSuccessOrderData] = useState<SuccessOrderData | null>(null);
 
   // Cart state persisted to localStorage
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
@@ -65,28 +61,48 @@ export default function App() {
     }
   }, [cartItems]);
 
+  // Click ripples on every `.btn-ripple` button
+  useEffect(() => initRipple(), []);
+
+  // Clear any pending toast timer on unmount
+  useEffect(() => () => window.clearTimeout(toastTimer.current), []);
+
   // Sync delivery fee from Firestore settings
   useEffect(() => {
     try {
       const settingsRef = doc(db, 'settings', 'restaurant');
-      const unsubscribe = onSnapshot(settingsRef, (docSnap) => {
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          if (typeof data.deliveryFee === 'number') {
-            setDeliveryFee(data.deliveryFee);
+      const unsubscribe = onSnapshot(
+        settingsRef,
+        (docSnap) => {
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            if (typeof data.deliveryFee === 'number') {
+              setDeliveryFee(data.deliveryFee);
+            }
           }
+        },
+        (error) => {
+          // keep the default fee instead of throwing an unhandled listener error
+          console.warn('Could not read restaurant settings:', error);
         }
-      });
+      );
       return () => unsubscribe();
     } catch (err) {
       console.warn('Could not subscribe to settings:', err);
     }
   }, []);
 
-  // Track scroll for active category & back to top button
+  // Track scroll for active category, progress line & back to top button
   useEffect(() => {
     const handleScroll = () => {
       setShowBackToTop(window.scrollY > 400);
+
+      // Gold progress line at the very top of the page
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = max > 0 ? Math.min(1, window.scrollY / max) : 0;
+      if (progressRef.current) {
+        progressRef.current.style.transform = `scaleX(${progress})`;
+      }
 
       // Check which section is in view
       const scrollPos = window.scrollY + 120;
@@ -104,6 +120,7 @@ export default function App() {
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -113,13 +130,14 @@ export default function App() {
   // Toast notification helper
   const showToast = (msg: string) => {
     setToastMessage(msg);
-    setTimeout(() => {
+    window.clearTimeout(toastTimer.current);
+    toastTimer.current = window.setTimeout(() => {
       setToastMessage(null);
     }, 2400);
   };
 
-  // Add to cart handler
-  const handleAddToCart = (newItem: CartItem) => {
+  // Add to cart handler (sourceRect = where the little chicken leg flies from)
+  const handleAddToCart = (newItem: CartItem, sourceRect?: DOMRect) => {
     setCartItems((prev) => {
       const existingIdx = prev.findIndex((item) => item.cartItemId === newItem.cartItemId);
       if (existingIdx > -1) {
@@ -136,6 +154,8 @@ export default function App() {
       return [...prev, newItem];
     });
 
+    flyToCart(sourceRect ?? null);
+    vibrate();
     showToast(`تمت إضافة "${newItem.name}" إلى السلة 🍗`);
   };
 
@@ -160,7 +180,7 @@ export default function App() {
       totalPrice: item.price
     };
 
-    handleAddToCart(newCartItem);
+    handleAddToCart(newCartItem, (e.currentTarget as HTMLElement).getBoundingClientRect());
   };
 
   // Update item quantity in cart
@@ -238,27 +258,13 @@ export default function App() {
     );
   }
 
-  // If user is on Welcome Splash screen
-  if (showSplash) {
-    return (
-      <WelcomeSplash
-        onEnterMenu={() => {
-          setShowSplash(false);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-        onOpenAdmin={() => setShowAdmin(true)}
-      />
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-[#070708] text-white selection:bg-[#9B1B42] selection:text-white relative">
-      {/* Background chicken ambient photo with subtle dark overlay */}
-      <div
-        className="fixed inset-0 pointer-events-none bg-cover bg-center opacity-[0.05] z-0 mix-blend-luminosity"
-        style={{ backgroundImage: `url(${RESTAURANT_INFO.heroBgUrl})` }}
-      />
-      <div className="fixed inset-0 pointer-events-none bg-gradient-to-b from-[#070708] via-[#09090C] to-[#050506] z-0" />
+    <div className="min-h-screen text-white relative">
+      {/* Dark luxury backdrop: obsidian + burgundy/gold glows + embers */}
+      <LuxuryBackground imageUrl={RESTAURANT_INFO.heroBgUrl} />
+
+      {/* Gold scroll-progress line */}
+      <div ref={progressRef} className="scroll-progress" aria-hidden="true" />
 
       {/* Top Header */}
       <TopHeader
@@ -266,7 +272,7 @@ export default function App() {
         cartTotal={totalCartPrice}
         onOpenCart={() => setIsCartOpen(true)}
         onOpenAdmin={() => setShowAdmin(true)}
-        onGoHome={() => setShowSplash(true)}
+        onGoHome={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
       />
 
       {/* Category Sticky Ribbons Bar */}
@@ -278,42 +284,44 @@ export default function App() {
       {/* Main Container */}
       <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-8">
         {/* Hero Mini Banner & Search Bar */}
-        <div className="bg-[#151518]/90 border border-stone-800/80 rounded-3xl p-5 sm:p-7 backdrop-blur-md shadow-xl">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="text-center sm:text-right">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#9B1B42]/20 border border-[#9B1B42]/40 text-[#E5809D] text-xs font-semibold mb-2">
-                <Flame className="w-3.5 h-3.5 text-amber-400" />
-                <span>الخلطة السرية الأصلية</span>
+        <Reveal>
+          <div className="luxe-panel rounded-3xl p-5 sm:p-7">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="text-center sm:text-right">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#9B1B42]/20 border border-[#E3B75B]/40 text-[#F7E2A6] text-xs font-semibold mb-2">
+                  <Flame className="w-3.5 h-3.5 text-amber-400" />
+                  <span>الخلطة السرية الأصلية</span>
+                </div>
+                <h2 className="text-xl sm:text-2xl font-black text-white">
+                  منيو <span className="gold-text">A1 Best Fried Chicken</span> 🍗
+                </h2>
+                <p className="text-xs sm:text-sm text-stone-400 mt-1">
+                  أجمد كريسبي وفرايد تشيكن في مصر، اطلب وجبتك واستلمها مقرمشة وساخنة عبر واتساب!
+                </p>
               </div>
-              <h2 className="text-xl sm:text-2xl font-black text-white">
-                منيو A1 Best Fried Chicken 🍗
-              </h2>
-              <p className="text-xs sm:text-sm text-stone-400 mt-1">
-                أجمد كريسبي وفرايد تشيكن في مصر، اطلب وجبتك واستلمها مقرمشة وساخنة عبر واتساب!
-              </p>
-            </div>
 
-            {/* Quick Search Input */}
-            <div className="w-full sm:w-72 relative">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="ابحث عن وجبة، ساندوتش، صوص..."
-                className="w-full pl-4 pr-10 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-xs sm:text-sm text-stone-100 placeholder:text-stone-500 focus:outline-none focus:border-[#9B1B42] transition-colors"
-              />
-              <Search className="w-4 h-4 text-stone-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-stone-400 hover:text-white"
-                >
-                  مسح
-                </button>
-              )}
+              {/* Quick Search Input */}
+              <div className="w-full sm:w-72 relative">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="ابحث عن وجبة، ساندوتش، صوص..."
+                  className="w-full pl-4 pr-10 py-2.5 rounded-xl bg-black/50 border border-[#E3B75B]/20 text-xs sm:text-sm text-stone-100 placeholder:text-stone-500 focus:outline-none focus:border-[#E3B75B]/70 focus:shadow-[0_0_0_3px_rgba(227,183,91,0.12)] transition-all"
+                />
+                <Search className="w-4 h-4 text-amber-400/80 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-stone-400 hover:text-white"
+                  >
+                    مسح
+                  </button>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        </Reveal>
 
         {/* Menu Categories & Items List */}
         <div className="space-y-12">
@@ -324,35 +332,38 @@ export default function App() {
             return (
               <section key={cat.id} id={`section-${cat.id}`} className="scroll-mt-28">
                 {/* Category Ribbon Header */}
-                <div className="mb-4">
-                  <div className="inline-flex items-center gap-2.5 ribbon-banner px-5 py-2 rounded-xl text-white shadow-lg">
-                    <span className="text-xl">{cat.icon}</span>
-                    <h2 className="text-base sm:text-lg font-black tracking-wide">
-                      {cat.title}
-                    </h2>
+                <Reveal>
+                  <div className="mb-4">
+                    <div className="inline-flex items-center gap-2.5 ribbon-banner px-5 py-2 rounded-xl text-white">
+                      <span className="text-xl">{cat.icon}</span>
+                      <h2 className="text-base sm:text-lg font-black tracking-wide">
+                        {cat.title}
+                      </h2>
+                    </div>
+                    <p className="text-xs text-stone-400 mt-2 mr-1">
+                      {cat.subtitle}
+                    </p>
                   </div>
-                  <p className="text-xs text-stone-400 mt-2 mr-1">
-                    {cat.subtitle}
-                  </p>
-                </div>
+                </Reveal>
 
                 {/* Items Grid */}
                 {items.length === 0 ? (
-                  <div className="p-8 text-center bg-stone-900/40 rounded-2xl border border-stone-800 text-stone-500 text-xs">
+                  <div className="p-8 text-center bg-black/40 rounded-2xl border border-stone-800 text-stone-500 text-xs">
                     لا توجد نتائج بحث في هذا القسم
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {items.map((item) => (
-                      <MenuItemCard
-                        key={item.id}
-                        item={item}
-                        onOpenDetails={(it) => {
-                          setSelectedItemForModal(it);
-                          setIsBottomSheetOpen(true);
-                        }}
-                        onQuickAdd={handleQuickAdd}
-                      />
+                    {items.map((item, idx) => (
+                      <Reveal key={item.id} delay={(idx % 3) * 70} className="h-full">
+                        <MenuItemCard
+                          item={item}
+                          onOpenDetails={(it) => {
+                            setSelectedItemForModal(it);
+                            setIsBottomSheetOpen(true);
+                          }}
+                          onQuickAdd={handleQuickAdd}
+                        />
+                      </Reveal>
                     ))}
                   </div>
                 )}
@@ -370,10 +381,13 @@ export default function App() {
         >
           <button
             onClick={() => setIsCartOpen(true)}
-            className="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-[#800E2B] via-[#9B1B42] to-[#6B0A25] text-white shadow-2xl shadow-[#9B1B42]/50 border border-pink-400/30 flex items-center justify-between active:scale-[0.98] transition-all group"
+            className="btn-burgundy btn-ripple w-full py-3.5 px-5 rounded-2xl text-white flex items-center justify-between active:scale-[0.98] transition-all group"
           >
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center font-mono font-bold text-sm">
+              <div
+                key={totalCartCount}
+                className="animate-badgePop w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center font-mono font-bold text-sm"
+              >
                 {totalCartCount}
               </div>
               <span className="text-sm font-bold">عرض سلة الطلبات</span>
@@ -393,7 +407,7 @@ export default function App() {
       {showBackToTop && (
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="fixed bottom-20 left-4 z-30 p-2.5 rounded-full bg-stone-900 border border-stone-700 text-stone-300 hover:text-white shadow-lg active:scale-95 transition-all"
+          className="fixed bottom-20 left-4 z-30 p-2.5 rounded-full bg-black/70 border border-[#E3B75B]/30 text-amber-300 hover:text-white hover:border-[#E3B75B]/70 shadow-lg active:scale-95 transition-all backdrop-blur"
           title="للأعلى"
         >
           <ChevronUp className="w-4 h-4" />
@@ -402,7 +416,10 @@ export default function App() {
 
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-xl bg-[#9B1B42] text-white text-xs font-bold shadow-2xl border border-pink-400/40 flex items-center gap-2 animate-bounce">
+        <div
+          key={toastMessage}
+          className="fixed top-20 left-1/2 z-50 px-4 py-2.5 rounded-xl btn-burgundy text-white text-xs font-bold flex items-center gap-2 animate-popIn"
+        >
           <CheckCircle2 className="w-4 h-4 text-amber-300" />
           <span>{toastMessage}</span>
         </div>

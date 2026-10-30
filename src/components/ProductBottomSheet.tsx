@@ -6,7 +6,7 @@ interface ProductBottomSheetProps {
   item: MenuItem | null;
   isOpen: boolean;
   onClose: () => void;
-  onAddToCart: (cartItem: CartItem) => void;
+  onAddToCart: (cartItem: CartItem, sourceRect?: DOMRect) => void;
 }
 
 const AVAILABLE_FREE_SAUCES = [
@@ -62,8 +62,10 @@ export const ProductBottomSheet: React.FC<ProductBottomSheetProps> = ({
     }
   };
 
-  const handleConfirm = () => {
-    const cartItemId = `${item.id}_${selectedOption ? selectedOption.id : 'base'}_${notes.trim()}_${selectedSauces.sort().join('-')}`;
+  const handleConfirm = (e: React.MouseEvent<HTMLButtonElement>) => {
+    // sort a copy: calling .sort() on the state array mutated it in place
+    const cartItemId = `${item.id}_${selectedOption ? selectedOption.id : 'base'}_${notes.trim()}_${[...selectedSauces].sort().join('-')}`;
+    const sourceRect = e.currentTarget.getBoundingClientRect();
 
     const newCartItem: CartItem = {
       cartItemId,
@@ -79,17 +81,17 @@ export const ProductBottomSheet: React.FC<ProductBottomSheetProps> = ({
       includedSauces: selectedSauces.length > 0 ? selectedSauces : undefined
     };
 
-    onAddToCart(newCartItem);
+    onAddToCart(newCartItem, sourceRect);
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/70 backdrop-blur-sm animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
       {/* Background click to dismiss */}
       <div className="absolute inset-0" onClick={onClose} />
 
       {/* Sheet Modal Container */}
-      <div className="relative z-10 w-full max-w-lg bg-[#141416] border border-stone-800 rounded-t-3xl sm:rounded-3xl shadow-2xl max-h-[90vh] flex flex-col overflow-hidden">
+      <div className="relative z-10 w-full max-w-lg luxe-panel rounded-t-3xl sm:rounded-3xl max-h-[90vh] flex flex-col overflow-hidden animate-slideUp">
         {/* Drag handle affordance for mobile */}
         <div className="w-12 h-1.5 bg-stone-700 rounded-full mx-auto my-2.5 sm:hidden" />
 
@@ -131,10 +133,10 @@ export const ProductBottomSheet: React.FC<ProductBottomSheetProps> = ({
                       key={opt.id}
                       type="button"
                       onClick={() => setSelectedOption(opt)}
-                      className={`p-3 rounded-xl border text-right flex flex-col justify-between transition-all ${
+                      className={`btn-ripple p-3 rounded-xl border text-right flex flex-col justify-between transition-all ${
                         isSelected
-                          ? 'bg-[#6B0A25] border-[#9B1B42] text-white shadow-md shadow-[#9B1B42]/30 ring-1 ring-pink-500'
-                          : 'bg-stone-900 border-stone-800 text-stone-300 hover:border-stone-700'
+                          ? 'bg-[#6B0A25] border-[#E3B75B]/70 text-white shadow-md shadow-[#9B1B42]/30 ring-1 ring-[#E3B75B]/60'
+                          : 'bg-black/40 border-stone-800 text-stone-300 hover:border-[#E3B75B]/30'
                       }`}
                     >
                       <div className="flex items-center justify-between">
@@ -228,10 +230,10 @@ export const ProductBottomSheet: React.FC<ProductBottomSheetProps> = ({
           <button
             type="button"
             onClick={handleConfirm}
-            className="w-full py-3.5 px-6 rounded-xl font-bold text-base bg-gradient-to-r from-[#800E2B] via-[#9B1B42] to-[#6B0A25] hover:from-[#9B1B42] hover:to-[#B82550] text-white shadow-lg shadow-[#9B1B42]/30 active:scale-95 transition-all flex items-center justify-between border border-pink-500/20"
+            className="btn-gold btn-ripple w-full py-3.5 px-6 rounded-xl text-base flex items-center justify-between"
           >
             <span>إضافة إلى السلة</span>
-            <span className="font-mono text-amber-300 text-lg font-extrabold">{totalPrice} ج</span>
+            <span className="font-mono text-lg font-extrabold">{totalPrice} ج</span>
           </button>
         </div>
       </div>

@@ -1,71 +1,112 @@
 import React, { useEffect } from 'react';
-import { CheckCircle2, MessageSquare, ArrowRight, Sparkles } from 'lucide-react';
+import { CheckCircle2, MessageSquare, ArrowRight, Sparkles, AlertTriangle } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { RESTAURANT_INFO } from '../data/menuData';
 
+export interface SuccessOrderData {
+  /** 0 / undefined when the order could not be saved in the system. */
+  orderNumber?: number;
+  /** true when the order was written to Firestore. */
+  synced: boolean;
+  customerName: string;
+  totalAmount: number;
+  orderType: 'takeaway' | 'delivery';
+  whatsappUrl: string;
+}
+
 interface OrderSuccessModalProps {
-  orderData: {
-    orderNumber: number;
-    customerName: string;
-    totalAmount: number;
-    orderType: 'takeaway' | 'delivery';
-    whatsappUrl: string;
-  } | null;
+  orderData: SuccessOrderData | null;
   onClose: () => void;
 }
 
 export const OrderSuccessModal: React.FC<OrderSuccessModalProps> = ({ orderData, onClose }) => {
   useEffect(() => {
-    if (orderData) {
-      // Fire celebration confetti
-      try {
-        confetti({
-          particleCount: 80,
-          spread: 70,
-          origin: { y: 0.6 },
-          colors: ['#9B1B42', '#F5A623', '#25D366', '#FFFFFF']
-        });
-      } catch (e) {
-        console.error(e);
-      }
+    if (!orderData) return;
+    // Celebration: gold confetti plus a burst of little chicken legs
+    try {
+      confetti({
+        particleCount: 80,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#9B1B42', '#F5A623', '#E3B75B', '#FFFFFF']
+      });
+      const chicken = confetti.shapeFromText({ text: '🍗', scalar: 2 });
+      confetti({
+        particleCount: 22,
+        spread: 100,
+        startVelocity: 38,
+        origin: { y: 0.65 },
+        shapes: [chicken],
+        scalar: 2,
+        flat: true
+      });
+    } catch (e) {
+      console.error(e);
     }
   }, [orderData]);
 
   if (!orderData) return null;
 
+  const { synced } = orderData;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-md bg-[#161619] border border-[#9B1B42]/50 rounded-3xl p-6 text-center shadow-2xl overflow-hidden">
+      <div className="relative w-full max-w-md luxe-panel rounded-3xl p-6 text-center overflow-hidden animate-slideUp">
         {/* Ambient Top Glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-20 bg-[#9B1B42]/30 blur-2xl pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-20 bg-[#E3B75B]/25 blur-2xl pointer-events-none" />
 
-        {/* Success Icon */}
+        {/* Status Icon */}
         <div className="relative mx-auto w-20 h-20 rounded-full bg-gradient-to-tr from-[#9B1B42] to-[#F5A623] p-1 flex items-center justify-center mb-4 shadow-xl">
           <div className="w-full h-full bg-[#161619] rounded-full flex items-center justify-center">
-            <CheckCircle2 className="w-12 h-12 text-[#25D366]" />
+            {synced ? (
+              <CheckCircle2 className="w-12 h-12 text-[#25D366]" />
+            ) : (
+              <AlertTriangle className="w-11 h-11 text-amber-400" />
+            )}
           </div>
         </div>
 
         {/* Order Title */}
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-2">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>تم تسجيل الطلب بنجاح في النظام</span>
-        </div>
+        {synced ? (
+          <>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-2">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>تم تسجيل الطلب بنجاح في النظام</span>
+            </div>
 
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
-          أوردرك رقم{' '}
-          <span className="font-mono text-amber-400 font-black text-3xl sm:text-4xl">
-            #{orderData.orderNumber}
-          </span>{' '}
-          ✅
-        </h2>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
+              أوردرك رقم{' '}
+              <span className="font-mono gold-text font-black text-3xl sm:text-4xl">
+                #{orderData.orderNumber}
+              </span>{' '}
+              ✅
+            </h2>
+          </>
+        ) : (
+          <>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold mb-2">
+              <AlertTriangle className="w-3.5 h-3.5" />
+              <span>لم يُحفظ الطلب في النظام</span>
+            </div>
+
+            <h2 className="text-2xl font-extrabold text-white">جهّزنا رسالة الطلب 📨</h2>
+          </>
+        )}
 
         <p className="text-stone-300 text-sm mt-3 leading-relaxed">
-          شكرًا لك يا <span className="text-amber-400 font-bold">{orderData.customerName}</span>! تم حفظ طلبك برقم يومي رسمي وسيتم تحضيره في أسرع وقت.
+          {synced ? (
+            <>
+              شكرًا لك يا <span className="text-amber-400 font-bold">{orderData.customerName}</span>! تم حفظ طلبك برقم يومي رسمي وسيتم تحضيره في أسرع وقت.
+            </>
+          ) : (
+            <>
+              يا <span className="text-amber-400 font-bold">{orderData.customerName}</span>، تعذّر حفظ الطلب في النظام بسبب مشكلة في الاتصال. اضغط الزر الأخضر وأرسل الرسالة على واتساب حتى يصل طلبك للمطعم.
+            </>
+          )}
         </p>
 
         {/* Summary Card */}
-        <div className="bg-stone-900/80 border border-stone-800 rounded-2xl p-4 my-5 text-right text-xs space-y-2">
+        <div className="bg-black/40 border border-stone-800 rounded-2xl p-4 my-5 text-right text-xs space-y-2">
           <div className="flex items-center justify-between text-stone-400">
             <span>نوع الطلب:</span>
             <span className="font-bold text-white">
@@ -90,10 +131,10 @@ export const OrderSuccessModal: React.FC<OrderSuccessModalProps> = ({ orderData,
             href={orderData.whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full py-3.5 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-[#25D366] to-[#128C7E] hover:from-[#1EBE5D] hover:to-[#25D366] text-white shadow-lg shadow-[#25D366]/20 flex items-center justify-center gap-2 transition-all active:scale-95"
+            className="btn-ripple w-full py-3.5 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-[#25D366] to-[#128C7E] hover:from-[#1EBE5D] hover:to-[#25D366] text-white shadow-lg shadow-[#25D366]/20 flex items-center justify-center gap-2 transition-all active:scale-95"
           >
             <MessageSquare className="w-4 h-4" />
-            <span>فتح محادثة الواتساب مرة أخرى</span>
+            <span>{synced ? 'فتح محادثة الواتساب مرة أخرى' : 'إرسال الطلب على واتساب'}</span>
           </a>
 
           <button

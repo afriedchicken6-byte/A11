@@ -12,7 +12,7 @@ export const RestaurantFooter: React.FC<RestaurantFooterProps> = ({ onOpenAdmin 
     encodeURIComponent('مرحبا مروان، تواصلت معك بخصوص تطوير موقع أو منيو إلكتروني');
 
   return (
-    <footer className="w-full bg-[#070708] border-t border-stone-900 text-stone-400 py-10 px-4 sm:px-8 text-right mt-16">
+    <footer className="relative z-10 w-full bg-black/55 backdrop-blur-sm border-t border-[#E3B75B]/15 text-stone-400 py-10 px-4 sm:px-8 text-right mt-16">
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Col 1: Brand & Logo */}

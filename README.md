@@ -1,20 +1,34 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# A1 Best Fried Chicken — منيو إلكتروني
 
-# Run and deploy your AI Studio app
+منيو إلكتروني لمطعم A1 (فرايد تشيكن وبرجر): طلب مباشر عبر واتساب مع ترقيم يومي تسلسلي للأوردرات ولوحة إدارة.
 
-This contains everything you need to run your app locally.
+- React 19 + Vite + Tailwind CSS 4
+- Firebase (Firestore + Google sign-in للوحة الإدارة)
+- تصميم دارك فخم مع تفاعلات (ripple، طيران الصنف للسلة، بطاقات بتأثير ضوئي، وزر الإرسال على شكل دجاجة)
 
-View your app in AI Studio: https://ai.studio/apps/23df2ea4-70b1-4e68-8d55-7cef9dd93a84
+## التشغيل محليًا
 
-## Run Locally
+```bash
+npm install     # أو: bun install
+npm run dev     # http://localhost:3000
+```
 
-**Prerequisites:**  Node.js
+## البناء
 
+```bash
+npm run build   # الناتج في dist/
+```
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## النشر على GitHub Pages
+
+النشر تلقائي عند كل push على `main` عبر `.github/workflows/deploy.yml`.
+
+1. من إعدادات المستودع: **Settings → Pages → Source: GitHub Actions**.
+2. الرابط: `https://<username>.github.io/<repo>/`
+3. لتعمل لوحة الإدارة (تسجيل الدخول بجوجل) على الرابط، أضف نطاق GitHub Pages
+   (`<username>.github.io`) في Firebase Console ← Authentication ← Settings ← Authorized domains.
+
+## قواعد Firestore
+
+ملف `firestore.rules` يوثّق القواعد المعتمدة. تعديله في المستودع لا ينشره تلقائيًا؛
+انشره من Firebase Console أو بالأمر `firebase deploy --only firestore:rules`.

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Plus, Clock, Sparkles } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Plus, Clock, Check } from 'lucide-react';
 import { MenuItem } from '../data/menuData';
 
 interface MenuItemCardProps {
@@ -14,6 +14,12 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({
   onQuickAdd
 }) => {
   const isComingSoon = !item.isAvailable || (!item.price && (!item.options || item.options.length === 0));
+  const hasOptions = !!item.options && item.options.length > 0;
+
+  // Brief "added" confirmation on the button for single-price items
+  const [justAdded, setJustAdded] = useState(false);
+  const addedTimer = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(addedTimer.current), []);
 
   // Determine display price string
   let priceDisplay = '';
@@ -21,18 +27,36 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({
     priceDisplay = 'قريباً';
   } else if (item.price) {
     priceDisplay = `${item.price} ج`;
-  } else if (item.options && item.options.length > 0) {
-    const minPrice = Math.min(...item.options.map((o) => o.price));
+  } else if (hasOptions) {
+    const minPrice = Math.min(...item.options!.map((o) => o.price));
     priceDisplay = `من ${minPrice} ج`;
   }
+
+  // Cursor spotlight + soft 3D tilt (mouse only, driven by CSS variables)
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType !== 'mouse' || isComingSoon) return;
+    const el = e.currentTarget;
+    const r = el.getBoundingClientRect();
+    const x = e.clientX - r.left;
+    const y = e.clientY - r.top;
+    el.style.setProperty('--mx', `${x}px`);
+    el.style.setProperty('--my', `${y}px`);
+    el.style.setProperty('--ry', `${(x / r.width - 0.5) * 7}deg`);
+    el.style.setProperty('--rx', `${-(y / r.height - 0.5) * 7}deg`);
+  };
+
+  const handlePointerLeave = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.currentTarget.style.setProperty('--rx', '0deg');
+    e.currentTarget.style.setProperty('--ry', '0deg');
+  };
 
   return (
     <div
       onClick={() => !isComingSoon && onOpenDetails(item)}
-      className={`group relative rounded-2xl p-4 transition-all duration-300 flex flex-col justify-between border ${
-        isComingSoon
-          ? 'bg-stone-900/40 border-stone-800/50 opacity-75 cursor-not-allowed'
-          : 'bg-[#151517] hover:bg-[#1A1A1D] border-stone-800/80 hover:border-[#9B1B42]/60 hover:shadow-xl hover:shadow-[#9B1B42]/15 cursor-pointer'
+      onPointerMove={handlePointerMove}
+      onPointerLeave={handlePointerLeave}
+      className={`luxe-card group h-full rounded-2xl p-4 flex flex-col justify-between ${
+        isComingSoon ? 'is-disabled opacity-70 cursor-not-allowed' : 'cursor-pointer'
       }`}
     >
       <div>
@@ -43,7 +67,7 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({
               {item.badges.map((badge, idx) => (
                 <span
                   key={idx}
-                  className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-[#6B0A25]/80 text-pink-200 border border-pink-500/30"
+                  className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-[#6B0A25]/80 text-pink-200 border border-[#E3B75B]/30"
                 >
                   {badge}
                 </span>
@@ -62,7 +86,7 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({
         </div>
 
         {/* Item Title */}
-        <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-amber-400 transition-colors leading-snug">
+        <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-amber-300 transition-colors leading-snug">
           {item.name}
         </h3>
 
@@ -73,12 +97,12 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({
       </div>
 
       {/* Bottom Row: Price & Action */}
-      <div className="mt-4 pt-3 border-t border-stone-800/60 flex items-center justify-between gap-2">
+      <div className="mt-4 pt-3 border-t border-[#E3B75B]/15 flex items-center justify-between gap-2">
         <div className="flex flex-col">
           <span className="text-[10px] text-stone-500">السعر</span>
           <span
             className={`font-mono text-base sm:text-lg font-extrabold ${
-              isComingSoon ? 'text-stone-400 text-sm font-sans' : 'text-[#F5A623]'
+              isComingSoon ? 'text-stone-400 text-sm font-sans' : 'gold-text'
             }`}
           >
             {priceDisplay}
@@ -97,11 +121,25 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({
             onClick={(e) => {
               e.stopPropagation();
               onQuickAdd(item, e);
+              if (!hasOptions) {
+                setJustAdded(true);
+                window.clearTimeout(addedTimer.current);
+                addedTimer.current = window.setTimeout(() => setJustAdded(false), 1100);
+              }
             }}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#800E2B] to-[#9B1B42] hover:from-[#9B1B42] hover:to-[#B82550] text-white text-xs sm:text-sm font-bold shadow-md shadow-[#9B1B42]/30 active:scale-95 transition-all border border-pink-500/20 group/btn"
+            className="btn-gold btn-ripple flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm group/btn"
           >
-            <Plus className="w-4 h-4 text-amber-300 group-hover/btn:rotate-90 transition-transform" />
-            <span>أضف</span>
+            {justAdded ? (
+              <>
+                <Check className="w-4 h-4" />
+                <span>تمت</span>
+              </>
+            ) : (
+              <>
+                <Plus className="w-4 h-4 group-hover/btn:rotate-90 transition-transform" />
+                <span>أضف</span>
+              </>
+            )}
           </button>
         )}
       </div>

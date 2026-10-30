@@ -18,22 +18,22 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
   onGoHome
 }) => {
   return (
-    <header className="sticky top-0 z-30 w-full bg-[#070708]/95 backdrop-blur-md border-b border-[#220B13] px-3 sm:px-6 py-2.5 transition-all shadow-md">
+    <header className="sticky top-0 z-30 w-full bg-[#050506]/80 backdrop-blur-xl border-b border-[#E3B75B]/15 px-3 sm:px-6 py-2.5 transition-all shadow-[0_8px_30px_-12px_rgba(0,0,0,0.9)]">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
-        {/* Left/Right Brand Lockup */}
+        {/* Brand Lockup (scrolls back to the top of the menu) */}
         <button
           onClick={onGoHome}
-          className="flex items-center gap-2.5 text-right hover:opacity-90 transition-opacity focus:outline-none"
+          className="flex items-center gap-2.5 text-right hover:opacity-90 transition-opacity focus:outline-none group"
         >
-          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full overflow-hidden border-2 border-[#9B1B42] bg-[#0A0A0C] p-0.5 shadow-md shrink-0 flex items-center justify-center">
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full overflow-hidden border-2 border-[#E3B75B]/70 bg-[#0A0A0C] p-0.5 shadow-[0_0_18px_rgba(227,183,91,0.35)] shrink-0 flex items-center justify-center group-hover:rotate-[8deg] group-hover:scale-105 transition-transform duration-300">
             <img
               src={RESTAURANT_INFO.logoUrl}
-              alt="A1 Burger Logo"
+              alt="A1 Fried Chicken Logo"
               className="w-full h-full object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
             />
           </div>
           <div className="flex flex-col text-right">
-            <span className="font-script text-xl sm:text-2xl text-amber-400 font-bold leading-none">
+            <span className="font-script text-xl sm:text-2xl gold-text font-bold leading-none">
               A1 Fried Chicken
             </span>
             <span className="text-[10px] sm:text-xs text-[#E5809D] font-medium tracking-tight mt-0.5">
@@ -42,48 +42,49 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
           </div>
         </button>
 
-        {/* Center/Actions: Call, Admin & Cart */}
+        {/* Actions: Call, Admin & Cart */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           {/* Quick Call */}
           <a
             href={`tel:${RESTAURANT_INFO.phone}`}
             title="اتصال مباشر بالمطعم"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-stone-900 border border-stone-800 text-stone-300 hover:text-amber-400 text-xs transition-colors"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/[0.04] border border-[#E3B75B]/20 text-stone-300 hover:text-amber-400 hover:border-[#E3B75B]/50 text-xs transition-colors"
           >
             <Phone className="w-3.5 h-3.5 text-amber-400" />
-            <span className="hidden md:inline font-mono">01055450417</span>
+            <span className="hidden md:inline font-mono">{RESTAURANT_INFO.phone}</span>
           </a>
 
           {/* Admin Toggle */}
           <button
             onClick={onOpenAdmin}
             title="لوحة الإدارة"
-            className="p-2 rounded-lg bg-stone-900 border border-stone-800 text-stone-400 hover:text-amber-400 transition-colors"
+            className="p-2 rounded-lg bg-white/[0.04] border border-[#E3B75B]/20 text-stone-400 hover:text-amber-400 hover:border-[#E3B75B]/50 transition-colors"
           >
             <ShieldCheck className="w-4 h-4" />
           </button>
 
-          {/* Cart Button */}
+          {/* Cart Button (id used by the fly-to-cart animation) */}
           <button
+            id="header-cart-btn"
             onClick={onOpenCart}
-            className="relative flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-gradient-to-r from-[#800E2B] to-[#9B1B42] hover:from-[#9B1B42] hover:to-[#B82550] text-white shadow-md shadow-[#9B1B42]/30 active:scale-95 transition-all border border-pink-500/20"
+            className="btn-burgundy btn-ripple relative flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-white hover:brightness-125 active:scale-95 transition-all"
           >
             <ShoppingBag className="w-4 h-4 text-amber-300" />
-            <div className="flex items-center gap-1 text-xs sm:text-sm font-bold">
+            <div className="flex items-center gap-1.5 text-xs sm:text-sm font-bold">
               <span>السلة</span>
               {cartCount > 0 && (
                 <>
-                  <span className="text-pink-200">·</span>
+                  {/* key re-plays the pop animation every time the count changes */}
+                  <span
+                    key={cartCount}
+                    className="animate-badgePop min-w-5 h-5 px-1 bg-[#F5A623] text-black font-extrabold text-[11px] rounded-full flex items-center justify-center shadow-md"
+                  >
+                    {cartCount}
+                  </span>
                   <span className="text-amber-300 font-mono">{cartTotal} ج</span>
                 </>
               )}
             </div>
-
-            {cartCount > 0 && (
-              <span className="absolute -top-1.5 -left-1.5 w-5 h-5 bg-[#F5A623] text-black font-extrabold text-[11px] rounded-full flex items-center justify-center shadow-md animate-bounce">
-                {cartCount}
-              </span>
-            )}
           </button>
         </div>
       </div>

@@ -1,3 +1,10 @@
+// Images are imported (not written as '/src/...' strings) so Vite bundles them
+// and they keep working after `vite build` / on GitHub Pages.
+import heroBgImg from '../assets/images/bg_crispy_chicken_1793300412213.jpg';
+import friedChickenImg from '../assets/images/showcase_fried_chicken_1793300413323.jpg';
+import burgerImg from '../assets/images/showcase_gourmet_burger_1793300413977.jpg';
+import macCheeseImg from '../assets/images/showcase_mac_cheese_1793300414115.jpg';
+
 export interface ItemSizeOption {
   id: string;
   name: string;
@@ -33,11 +40,12 @@ export const RESTAURANT_INFO = {
   address: 'شارع طه حسين، ميدان قصر الثقافة، أمام فيس تو فيس',
   facebookUrl: 'https://www.facebook.com/share/19otzT6Gyj/',
   defaultDeliveryFee: 20,
-  logoUrl: '/assets/aistudio/logo_transparent.png',
-  heroBgUrl: '/src/assets/images/bg_crispy_chicken_1793300412213.jpg',
-  friedChickenImg: '/src/assets/images/showcase_fried_chicken_1793300413323.jpg',
-  burgerImg: '/src/assets/images/showcase_gourmet_burger_1793300413977.jpg',
-  macCheeseImg: '/src/assets/images/showcase_mac_cheese_1793300414115.jpg'
+  // lives in /public, so it must respect the deploy base path
+  logoUrl: `${import.meta.env.BASE_URL}assets/aistudio/logo_transparent.png`,
+  heroBgUrl: heroBgImg,
+  friedChickenImg,
+  burgerImg,
+  macCheeseImg
 };
 
 export const MENU_CATEGORIES: MenuCategory[] = [
@@ -46,28 +54,28 @@ export const MENU_CATEGORIES: MenuCategory[] = [
     title: 'وجبات الكرسبي',
     subtitle: 'قطع كرسبي ذهبية بتتبيلة A1 السرية المقرمشة',
     icon: '🍗',
-    image: '/src/assets/images/showcase_fried_chicken_1793300413323.jpg'
+    image: friedChickenImg
   },
   {
     id: 'chicken-meals',
     title: 'وجبات الدجاج',
     subtitle: 'وجبات مشبعة كاملة مع البطاطس والخبز والكول سلو',
     icon: '🍗',
-    image: '/src/assets/images/showcase_fried_chicken_1793300413323.jpg'
+    image: friedChickenImg
   },
   {
     id: 'burgers-sandwiches',
     title: 'ساندوتشات البرجر والدجاج',
     subtitle: 'ساندوتشات عملاقة بخلطات A1 المبتكرة والجبن السايح',
     icon: '🍔',
-    image: '/src/assets/images/showcase_gourmet_burger_1793300413977.jpg'
+    image: burgerImg
   },
   {
     id: 'mac-and-cheese',
     title: 'ماك آند تشيز',
     subtitle: 'مكرونة غارقة في صوص الجبن الغني ولمسات الشيتوس',
     icon: '🧀',
-    image: '/src/assets/images/showcase_mac_cheese_1793300414115.jpg'
+    image: macCheeseImg
   },
   {
     id: 'appetizers',

@@ -3,9 +3,7 @@ import {
   doc,
   runTransaction,
   serverTimestamp,
-  collection,
-  handleFirestoreError,
-  OperationType
+  collection
 } from '../lib/firebase';
 import { CustomerOrder, RESTAURANT_INFO } from '../data/menuData';
 
@@ -22,12 +20,39 @@ export function getCairoDateString(): string {
     });
     return formatter.format(new Date());
   } catch {
-    // Fallback if Intl format fails
-    const now = new Date();
-    const utcHours = now.getUTCHours() + 2; // Cairo is UTC+2 / UTC+3
-    const cairoDate = new Date(now.getTime() + (utcHours * 60 * 60 * 1000));
-    return cairoDate.toISOString().split('T')[0];
+    // Fallback if Intl format fails: shift by +2h (Cairo standard time) and read the UTC date
+    const cairoNow = new Date(Date.now() + 2 * 60 * 60 * 1000);
+    return cairoNow.toISOString().split('T')[0];
   }
+}
+
+type OrderItem = CustomerOrder['items'][number];
+
+/**
+ * Firestore rejects `undefined` field values, so only keep the optional
+ * fields that actually have a value.
+ */
+function cleanItems(items: OrderItem[]): OrderItem[] {
+  return items.map((it) => {
+    const clean: OrderItem = {
+      name: it.name,
+      unitPrice: it.unitPrice,
+      quantity: it.quantity,
+      totalPrice: it.totalPrice
+    };
+    if (it.optionName) clean.optionName = it.optionName;
+    if (it.notes) clean.notes = it.notes;
+    if (it.includedSauces && it.includedSauces.length > 0) clean.includedSauces = it.includedSauces;
+    return clean;
+  });
+}
+
+export interface SubmittedOrder {
+  orderId: string;
+  orderNumber: number;
+  dateString: string;
+  /** false when the order could not be written to Firestore (network/rules problem). */
+  synced: boolean;
 }
 
 /**
@@ -35,7 +60,7 @@ export function getCairoDateString(): string {
  */
 export async function submitOrderWithDailyCounter(
   orderInput: Omit<CustomerOrder, 'orderNumber' | 'dateString' | 'createdAt' | 'status'>
-): Promise<{ orderId: string; orderNumber: number; dateString: string }> {
+): Promise<SubmittedOrder> {
   const dateString = getCairoDateString();
   const counterRef = doc(db, 'daily_counters', dateString);
   const newOrderRef = doc(collection(db, 'orders'));
@@ -73,7 +98,7 @@ export async function submitOrderWithDailyCounter(
         deliveryAddress: orderInput.deliveryAddress?.trim() || '',
         landmark: orderInput.landmark?.trim() || '',
         orderNotes: orderInput.orderNotes?.trim() || '',
-        items: orderInput.items,
+        items: cleanItems(orderInput.items),
         deliveryFee: orderInput.deliveryFee,
         subtotal: orderInput.subtotal,
         totalAmount: orderInput.totalAmount,
@@ -85,22 +110,21 @@ export async function submitOrderWithDailyCounter(
       return {
         orderId,
         orderNumber: nextNumber,
-        dateString
+        dateString,
+        synced: true
       };
     });
 
     return result;
   } catch (error) {
-    console.error('Failed in transaction, attempting resilient fallback:', error);
-    // In case of network glitch, fallback so customer order isn't lost
-    const localDailyKey = `a1_daily_count_${dateString}`;
-    const localCount = parseInt(localStorage.getItem(localDailyKey) || '0', 10) + 1;
-    localStorage.setItem(localDailyKey, String(localCount));
-
+    console.error('Failed to save the order in Firestore:', error);
+    // The customer can still send the order over WhatsApp, but it is NOT in the
+    // system, so we say so (synced: false) instead of pretending it was saved.
     return {
       orderId: 'loc_' + Date.now(),
-      orderNumber: localCount,
-      dateString
+      orderNumber: 0,
+      dateString,
+      synced: false
     };
   }
 }
@@ -109,7 +133,8 @@ export async function submitOrderWithDailyCounter(
  * Builds the beautifully formatted WhatsApp message exactly matching the requested format
  */
 export function buildWhatsAppMessage(order: {
-  orderNumber: number;
+  /** Omit when the order was not saved, so no fake number is sent. */
+  orderNumber?: number;
   orderType: 'takeaway' | 'delivery';
   customerName: string;
   customerPhone: string;
@@ -141,7 +166,9 @@ export function buildWhatsAppMessage(order: {
     .join('\n');
 
   let message = `🍗 *طلب جديد من A1*\n`;
-  message += `رقم الأوردر: #${order.orderNumber}\n`;
+  if (order.orderNumber) {
+    message += `رقم الأوردر: #${order.orderNumber}\n`;
+  }
   message += `النوع: ${typeText}\n`;
   message += `الاسم: ${order.customerName}\n`;
   message += `الموبايل: ${order.customerPhone}\n`;

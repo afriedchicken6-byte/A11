@@ -31,12 +31,21 @@ import {
   onSnapshot,
   doc,
   updateDoc,
+  setDoc,
   serverTimestamp,
   handleFirestoreError,
   OperationType
 } from '../lib/firebase';
 import { getCairoDateString } from '../services/orderService';
 import { RESTAURANT_INFO } from '../data/menuData';
+import { LuxuryBackground } from './LuxuryBackground';
+
+/** 01012345678 -> 201012345678 (Egypt's country code is 20, not 2). */
+function toWhatsAppNumber(phone: string): string {
+  const digits = phone.replace(/\D/g, '');
+  if (digits.startsWith('20')) return digits;
+  return `20${digits.replace(/^0/, '')}`;
+}
 
 interface AdminDashboardProps {
   onBackToMenu: () => void;
@@ -85,6 +94,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [feeSavedMessage, setFeeSavedMessage] = useState<boolean>(false);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState<string | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [feeError, setFeeError] = useState<string | null>(null);
 
   const todayCairo = getCairoDateString();
 
@@ -157,10 +167,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     }
   };
 
-  const handleSaveDeliveryFee = () => {
-    onUpdateDeliveryFee(editingFee);
-    setFeeSavedMessage(true);
-    setTimeout(() => setFeeSavedMessage(false), 3000);
+  // The fee used to be changed in local state only, so it was lost on reload and
+  // customers never saw it. Persist it where the menu listens (settings/restaurant).
+  const handleSaveDeliveryFee = async () => {
+    setFeeError(null);
+    try {
+      await setDoc(
+        doc(db, 'settings', 'restaurant'),
+        { deliveryFee: editingFee, updatedAt: serverTimestamp() },
+        { merge: true }
+      );
+      onUpdateDeliveryFee(editingFee);
+      setFeeSavedMessage(true);
+      setTimeout(() => setFeeSavedMessage(false), 3000);
+    } catch (error) {
+      console.error('Failed to save delivery fee:', error);
+      setFeeError('تعذّر حفظ الرسوم، تأكد من تسجيل الدخول بحساب المدير.');
+    }
   };
 
   // KPIs
@@ -181,8 +204,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   // Render Login view if not signed in
   if (!authLoading && !currentUser) {
     return (
-      <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center justify-center p-4 text-center">
-        <div className="w-full max-w-md bg-[#151518] border border-stone-800 rounded-3xl p-8 shadow-2xl">
+      <div className="relative min-h-screen bg-[#050506] flex flex-col items-center justify-center p-4 text-center">
+        <LuxuryBackground imageUrl={RESTAURANT_INFO.heroBgUrl} />
+        <div className="relative z-10 w-full max-w-md luxe-panel rounded-3xl p-8 animate-slideUp">
           <div className="w-16 h-16 rounded-full bg-[#9B1B42]/20 border border-[#9B1B42] text-[#9B1B42] flex items-center justify-center mx-auto mb-4">
             <ShieldCheck className="w-8 h-8 text-amber-400" />
           </div>
@@ -241,9 +265,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   }
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] text-white text-right pb-16">
+    <div className="relative min-h-screen bg-[#050506] text-white text-right pb-16">
+      <LuxuryBackground imageUrl={RESTAURANT_INFO.heroBgUrl} />
       {/* Admin Top Bar */}
-      <header className="sticky top-0 z-30 bg-[#161619]/95 backdrop-blur-md border-b border-stone-800 px-4 sm:px-8 py-3.5 flex items-center justify-between">
+      <header className="sticky top-0 z-30 bg-[#050506]/80 backdrop-blur-xl border-b border-[#E3B75B]/15 px-4 sm:px-8 py-3.5 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
             onClick={onBackToMenu}
@@ -277,7 +302,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-8 py-6 space-y-6">
+      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 py-6 space-y-6">
         {/* KPI Summary Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           {/* Card 1: Total Orders */}
@@ -368,6 +393,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             {feeSavedMessage && (
               <span className="text-xs text-emerald-400 animate-fadeIn">تم الحفظ بنجاح!</span>
             )}
+            {feeError && <span className="text-xs text-red-400 animate-fadeIn">{feeError}</span>}
           </div>
         </div>
 
@@ -474,7 +500,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         </a>
 
                         <a
-                          href={`https://wa.me/2${order.customerPhone.replace(/^0/, '')}`}
+                          href={`https://wa.me/${toWhatsAppNumber(order.customerPhone)}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-1 text-[#25D366] hover:text-white bg-[#25D366]/10 border border-[#25D366]/20 px-2 py-1 rounded-lg text-[11px]"
