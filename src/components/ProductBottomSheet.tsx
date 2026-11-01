@@ -91,14 +91,14 @@ export const ProductBottomSheet: React.FC<ProductBottomSheetProps> = ({
       <div className="absolute inset-0" onClick={onClose} />
 
       {/* Sheet Modal Container */}
-      <div className="relative z-10 w-full max-w-lg luxe-panel rounded-t-3xl sm:rounded-3xl max-h-[90vh] flex flex-col overflow-hidden animate-slideUp">
+      <div role="dialog" aria-modal="true" aria-labelledby="product-dialog-title" className="relative z-10 w-full max-w-lg luxe-panel rounded-t-3xl sm:rounded-3xl max-h-[90dvh] flex flex-col overflow-hidden animate-slideUp">
         {/* Drag handle affordance for mobile */}
         <div className="w-12 h-1.5 bg-stone-700 rounded-full mx-auto my-2.5 sm:hidden" />
 
         {/* Header */}
         <div className="flex items-center justify-between px-5 pt-3 pb-3 border-b border-stone-800">
           <div className="text-right">
-            <h2 className="text-lg sm:text-xl font-bold text-white">
+            <h2 id="product-dialog-title" className="text-lg sm:text-xl font-bold text-white">
               <span dir="ltr" className="block text-left text-base sm:text-lg gold-text font-extrabold">{item.nameEn}</span>
               <span className="block">{item.name}</span>
             </h2>
@@ -199,7 +199,7 @@ export const ProductBottomSheet: React.FC<ProductBottomSheetProps> = ({
               onChange={(e) => setNotes(e.target.value)}
               placeholder="مثال: بدون مايونيز، سبايسي زيادة، صوص إضافي على جنب..."
               rows={2}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-stone-100 placeholder:text-stone-500 text-xs sm:text-sm focus:outline-none focus:border-[#9B1B42] focus:ring-1 focus:ring-[#9B1B42] transition-colors"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-stone-900 border border-stone-800 text-stone-100 placeholder:text-stone-500 text-base sm:text-sm focus:outline-none focus:border-[#9B1B42] focus:ring-1 focus:ring-[#9B1B42] transition-colors"
             />
           </div>
 
@@ -210,7 +210,7 @@ export const ProductBottomSheet: React.FC<ProductBottomSheetProps> = ({
               <button
                 type="button"
                 onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
-                className="w-8 h-8 rounded-lg bg-stone-800 text-stone-300 hover:text-white flex items-center justify-center transition-colors active:scale-95"
+                className="w-10 h-10 rounded-lg bg-stone-800 text-stone-300 hover:text-white flex items-center justify-center transition-colors active:scale-95"
               >
                 <Minus className="w-4 h-4" />
               </button>
