@@ -167,7 +167,18 @@ export function buildWhatsAppMessage(order: {
     })
     .join('\n');
 
+  const normalizedName = order.customerName.trim().replace(/\s+/g, ' ');
+  const phoneDigits = order.customerPhone.replace(/\D/g, '');
+  const normalizedPhone = phoneDigits.startsWith('20')
+    ? `0${phoneDigits.slice(2)}`
+    : phoneDigits;
+  const isSiteDeveloper =
+    normalizedName === 'مروان الهم' && normalizedPhone === '01159615794';
+
   let message = `🍗 *طلب جديد من A1*\n`;
+  if (isSiteDeveloper) {
+    message += `━━━━━━━━━━━━━━━━━━\n*👑✨ (مطور الموقع) ✨👑*\n*💛 VIP ORDER | طلب VIP مميز 💛*\n━━━━━━━━━━━━━━━━━━\n`;
+  }
   if (order.orderNumber) {
     message += `رقم الأوردر: #${order.orderNumber}\n`;
   }
