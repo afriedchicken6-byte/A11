@@ -87,7 +87,8 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({
 
         {/* Item Title */}
         <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-amber-300 transition-colors leading-snug">
-          {item.name}
+          <span dir="ltr" className="block text-left text-sm sm:text-base">{item.nameEn}</span>
+          <span className="block">{item.name}</span>
         </h3>
 
         {/* Description / Ingredients */}
