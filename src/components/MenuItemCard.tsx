@@ -113,7 +113,7 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({
         {isComingSoon ? (
           <button
             disabled
-            className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-stone-800 text-stone-500 cursor-not-allowed"
+            className="min-h-11 px-3 py-1.5 rounded-lg text-xs font-semibold bg-stone-800 text-stone-500 cursor-not-allowed"
           >
             غير متوفر حالياً
           </button>
@@ -128,7 +128,7 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({
                 addedTimer.current = window.setTimeout(() => setJustAdded(false), 1100);
               }
             }}
-            className="btn-gold btn-ripple flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm group/btn"
+            className="btn-gold btn-ripple flex min-h-11 items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm group/btn"
           >
             {justAdded ? (
               <>
