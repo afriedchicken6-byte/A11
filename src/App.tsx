@@ -293,7 +293,7 @@ export default function App() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="ابحث عن وجبة، ساندوتش، صوص..."
-                  className="w-full pl-4 pr-10 py-2.5 rounded-xl bg-black/50 border border-[#E3B75B]/20 text-xs sm:text-sm text-stone-100 placeholder:text-stone-500 focus:outline-none focus:border-[#E3B75B]/70 focus:shadow-[0_0_0_3px_rgba(227,183,91,0.12)] transition-all"
+                  className="w-full pl-4 pr-10 py-2.5 rounded-xl bg-black/50 border border-[#E3B75B]/20 text-base sm:text-sm text-stone-100 placeholder:text-stone-500 focus:outline-none focus:border-[#E3B75B]/70 focus:shadow-[0_0_0_3px_rgba(227,183,91,0.12)] transition-all"
                 />
                 <Search className="w-4 h-4 text-amber-400/80 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 {searchQuery && (
