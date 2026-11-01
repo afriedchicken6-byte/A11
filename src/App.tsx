@@ -3,7 +3,8 @@ import {
   Search,
   Flame,
   CheckCircle2,
-  ChevronUp
+  ChevronUp,
+  Share2
 } from 'lucide-react';
 import {
   MENU_CATEGORIES,
@@ -132,6 +133,59 @@ export default function App() {
     toastTimer.current = window.setTimeout(() => {
       setToastMessage(null);
     }, 2400);
+  };
+
+  const handleShareQR = async () => {
+    let svgObjectUrl: string | undefined;
+    try {
+      const response = await fetch(`${import.meta.env.BASE_URL}menu-qr.svg`);
+      if (!response.ok) throw new Error('QR image is unavailable');
+      svgObjectUrl = URL.createObjectURL(await response.blob());
+
+      const image = new Image();
+      image.src = svgObjectUrl;
+      await image.decode();
+
+      const canvas = document.createElement('canvas');
+      canvas.width = 1025;
+      canvas.height = 1025;
+      const context = canvas.getContext('2d');
+      if (!context) throw new Error('Canvas is unavailable');
+      context.fillStyle = '#ffffff';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      const pngBlob = await new Promise<Blob>((resolve, reject) => {
+        canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Could not create QR image')), 'image/png');
+      });
+      const file = new File([pngBlob], 'A1-Burger-Menu-QR.png', { type: 'image/png' });
+
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], title: 'A1 Burger Menu', text: 'امسح رمز QR لفتح منيو A1 Burger' });
+        showToast('تمت مشاركة رمز QR');
+        return;
+      }
+
+      const downloadUrl = URL.createObjectURL(pngBlob);
+      const downloadLink = document.createElement('a');
+      downloadLink.href = downloadUrl;
+      downloadLink.download = 'A1-Burger-Menu-QR.png';
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      downloadLink.remove();
+      window.setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        showToast('تم تنزيل صورة QR ونسخ رابط المنيو');
+      } catch {
+        showToast('تم تنزيل صورة QR لمشاركتها');
+      }
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') return;
+      console.error('Could not share menu QR:', error);
+      showToast('تعذر تجهيز رمز QR للمشاركة');
+    } finally {
+      if (svgObjectUrl) URL.revokeObjectURL(svgObjectUrl);
+    }
   };
 
   // Add to cart handler (sourceRect = where the little chicken leg flies from)
@@ -286,24 +340,30 @@ export default function App() {
                 </p>
               </div>
 
-              {/* Quick Search Input */}
-              <div className="w-full sm:w-72 relative">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="ابحث عن وجبة، ساندوتش، صوص..."
-                  className="w-full pl-4 pr-10 py-2.5 rounded-xl bg-black/50 border border-[#E3B75B]/20 text-base sm:text-sm text-stone-100 placeholder:text-stone-500 focus:outline-none focus:border-[#E3B75B]/70 focus:shadow-[0_0_0_3px_rgba(227,183,91,0.12)] transition-all"
-                />
-                <Search className="w-4 h-4 text-amber-400/80 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-stone-400 hover:text-white"
-                  >
-                    مسح
-                  </button>
-                )}
+              {/* Quick Search and QR sharing */}
+              <div className="w-full sm:w-80 flex items-center gap-2">
+                <div className="flex-1 min-w-0 relative">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="ابحث عن وجبة، ساندوتش، صوص..."
+                    className="w-full pl-4 pr-10 py-2.5 rounded-xl bg-black/50 border border-[#E3B75B]/20 text-base sm:text-sm text-stone-100 placeholder:text-stone-500 focus:outline-none focus:border-[#E3B75B]/70 focus:shadow-[0_0_0_3px_rgba(227,183,91,0.12)] transition-all"
+                  />
+                  <Search className="w-4 h-4 text-amber-400/80 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-stone-400 hover:text-white"
+                    >
+                      مسح
+                    </button>
+                  )}
+                </div>
+                <button type="button" onClick={handleShareQR} aria-label="مشاركة رمز QR للمنيو" title="مشاركة رمز QR للمنيو" className="btn-ripple shrink-0 min-h-11 min-w-11 px-3 rounded-xl bg-[#9B1B42]/25 border border-[#E3B75B]/50 text-[#F7E2A6] hover:bg-[#9B1B42]/40 active:scale-95 transition-all flex items-center justify-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#E3B75B]">
+                  <Share2 className="w-4 h-4" />
+                  <span className="hidden sm:inline text-xs font-bold">مشاركة QR</span>
+                </button>
               </div>
             </div>
           </div>
