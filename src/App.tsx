@@ -4,7 +4,9 @@ import {
   Flame,
   CheckCircle2,
   ChevronUp,
-  Share2
+  Share2,
+  Copy,
+  X
 } from 'lucide-react';
 import {
   MENU_CATEGORIES,
@@ -35,6 +37,7 @@ export default function App() {
   const [deliveryFee, setDeliveryFee] = useState<number>(RESTAURANT_INFO.defaultDeliveryFee);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [showBackToTop, setShowBackToTop] = useState<boolean>(false);
+  const [isQRModalOpen, setIsQRModalOpen] = useState<boolean>(false);
 
   const progressRef = useRef<HTMLDivElement>(null);
   const toastTimer = useRef<number | undefined>(undefined);
@@ -133,6 +136,24 @@ export default function App() {
     toastTimer.current = window.setTimeout(() => {
       setToastMessage(null);
     }, 2400);
+  };
+
+  const handleCopyMenuLink = async () => {
+    const menuUrl = window.location.href;
+    try {
+      await navigator.clipboard.writeText(menuUrl);
+      showToast('تم نسخ رابط المنيو');
+    } catch {
+      const input = document.createElement('textarea');
+      input.value = menuUrl;
+      input.style.position = 'fixed';
+      input.style.opacity = '0';
+      document.body.appendChild(input);
+      input.select();
+      const copied = document.execCommand('copy');
+      input.remove();
+      showToast(copied ? 'تم نسخ رابط المنيو' : 'تعذر نسخ الرابط');
+    }
   };
 
   const handleShareQR = async () => {
@@ -360,7 +381,7 @@ export default function App() {
                     </button>
                   )}
                 </div>
-                <button type="button" onClick={handleShareQR} aria-label="مشاركة رمز QR للمنيو" title="مشاركة رمز QR للمنيو" className="btn-ripple shrink-0 min-h-11 min-w-11 px-3 rounded-xl bg-[#9B1B42]/25 border border-[#E3B75B]/50 text-[#F7E2A6] hover:bg-[#9B1B42]/40 active:scale-95 transition-all flex items-center justify-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#E3B75B]">
+                <button type="button" onClick={() => setIsQRModalOpen(true)} aria-label="مشاركة رمز QR للمنيو" title="مشاركة رمز QR للمنيو" className="btn-ripple shrink-0 min-h-11 min-w-11 px-3 rounded-xl bg-[#9B1B42]/25 border border-[#E3B75B]/50 text-[#F7E2A6] hover:bg-[#9B1B42]/40 active:scale-95 transition-all flex items-center justify-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#E3B75B]">
                   <Share2 className="w-4 h-4" />
                   <span className="hidden sm:inline text-xs font-bold">مشاركة QR</span>
                 </button>
@@ -464,10 +485,44 @@ export default function App() {
       {toastMessage && (
         <div
           key={toastMessage}
-          className="fixed top-20 left-1/2 z-50 px-4 py-2.5 rounded-xl btn-burgundy text-white text-xs font-bold flex items-center gap-2 animate-popIn"
+          className="fixed top-20 left-1/2 z-[90] px-4 py-2.5 rounded-xl btn-burgundy text-white text-xs font-bold flex items-center gap-2 animate-popIn"
         >
           <CheckCircle2 className="w-4 h-4 text-amber-300" />
           <span>{toastMessage}</span>
+        </div>
+      )}
+
+      {/* QR sharing dialog */}
+      {isQRModalOpen && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4" dir="rtl">
+          <button
+            type="button"
+            aria-label="إغلاق نافذة مشاركة QR"
+            onClick={() => setIsQRModalOpen(false)}
+            className="absolute inset-0 bg-black/75 backdrop-blur-sm"
+          />
+          <section role="dialog" aria-modal="true" aria-labelledby="share-qr-title" className="relative z-10 w-full max-w-sm rounded-3xl border border-[#E3B75B]/45 bg-[#171313] p-5 shadow-[0_0_45px_rgba(227,183,91,0.18)]">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h2 id="share-qr-title" className="text-lg font-black text-[#F7E2A6]">شارك منيو A1 Burger</h2>
+              <button type="button" onClick={() => setIsQRModalOpen(false)} aria-label="إغلاق" className="rounded-full p-2 text-stone-300 hover:bg-white/10 hover:text-white">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <p className="mb-4 text-sm text-stone-400">امسح رمز QR لفتح المنيو مباشرة</p>
+            <div className="mx-auto w-full max-w-[320px] overflow-hidden rounded-2xl bg-white p-3">
+              <img src={`${import.meta.env.BASE_URL}menu-qr.svg`} alt="رمز QR لمنيو A1 Burger" className="block h-auto w-full" />
+            </div>
+            <p className="mt-4 text-xs font-semibold text-stone-300">رابط المنيو</p>
+            <p dir="ltr" className="mt-1 break-all rounded-xl border border-white/10 bg-black/30 p-3 text-center text-xs text-stone-300">{window.location.href}</p>
+            <button type="button" onClick={handleCopyMenuLink} className="btn-ripple mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#E3B75B]/50 bg-[#9B1B42]/35 px-4 py-2.5 font-bold text-[#F7E2A6] transition hover:bg-[#9B1B42]/55 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#E3B75B]">
+              <Copy className="h-4 w-4" />
+              <span>نسخ الرابط</span>
+            </button>
+            <button type="button" onClick={handleShareQR} className="mt-2 flex min-h-10 w-full items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-stone-300 transition hover:bg-white/5 hover:text-white">
+              <Share2 className="h-4 w-4" />
+              <span>مشاركة صورة QR</span>
+            </button>
+          </section>
         </div>
       )}
 
