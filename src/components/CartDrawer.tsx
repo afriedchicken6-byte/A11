@@ -188,7 +188,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   };
 
   const inputClass =
-    'w-full px-3.5 py-2.5 rounded-xl bg-black/50 border border-[#E3B75B]/15 text-stone-100 placeholder:text-stone-600 text-xs sm:text-sm focus:outline-none focus:border-[#E3B75B]/60 focus:shadow-[0_0_0_3px_rgba(227,183,91,0.1)] transition-all';
+    'w-full px-3.5 py-2.5 rounded-xl bg-black/50 border border-[#E3B75B]/15 text-stone-100 placeholder:text-stone-600 text-base sm:text-sm focus:outline-none focus:border-[#E3B75B]/60 focus:shadow-[0_0_0_3px_rgba(227,183,91,0.1)] transition-all';
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-end sm:justify-center p-0 bg-black/80 backdrop-blur-sm animate-fadeIn">
@@ -196,12 +196,12 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
       <div className="absolute inset-0" onClick={sendStatus === 'idle' ? onClose : undefined} />
 
       {/* Cart Drawer Panel */}
-      <div className="relative z-10 w-full sm:max-w-lg h-[92vh] sm:h-auto sm:max-h-[90vh] luxe-panel rounded-t-3xl sm:rounded-3xl flex flex-col overflow-hidden text-right animate-slideUp">
+      <div role="dialog" aria-modal="true" aria-labelledby="cart-dialog-title" className="relative z-10 w-full sm:max-w-lg h-[92dvh] sm:h-auto sm:max-h-[90dvh] luxe-panel rounded-t-3xl sm:rounded-3xl flex flex-col overflow-hidden text-right animate-slideUp">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-[#E3B75B]/15 bg-black/30">
           <div className="flex items-center gap-2">
             <ShoppingBag className="w-5 h-5 text-amber-400" />
-            <h2 className="text-lg font-bold text-white">سلة الطلبات</h2>
+            <h2 id="cart-dialog-title" className="text-lg font-bold text-white">سلة الطلبات</h2>
             <span className="text-xs font-mono text-stone-400">({cartItems.length} صنف)</span>
           </div>
 
@@ -214,7 +214,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
         </div>
 
         {/* Scrollable Content Body */}
-        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5 no-scrollbar">
+        <div className="flex-1 overflow-y-auto overscroll-contain px-5 py-4 space-y-5 no-scrollbar">
           {/* Order Type Toggle (تيك أواي / دليفري) */}
           <div>
             <label className="block text-xs font-semibold text-stone-400 mb-2">
@@ -306,7 +306,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                     <button
                       type="button"
                       onClick={() => onRemoveItem(item.cartItemId)}
-                      className="text-stone-500 hover:text-red-400 p-1 transition-colors"
+                      aria-label="حذف الصنف" className="min-w-10 min-h-10 flex items-center justify-center text-stone-500 hover:text-red-400 p-2 transition-colors"
                       title="حذف"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -316,7 +316,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                       <button
                         type="button"
                         onClick={() => onUpdateQuantity(item.cartItemId, -1)}
-                        className="btn-ripple w-6 h-6 rounded bg-stone-700 text-stone-200 hover:text-white flex items-center justify-center text-xs"
+                        className="btn-ripple w-10 h-10 rounded bg-stone-700 text-stone-200 hover:text-white flex items-center justify-center text-xs"
                       >
                         <Minus className="w-3 h-3" />
                       </button>
