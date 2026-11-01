@@ -315,7 +315,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: 'mozzarella-sticks',
-    nameEn: '🧀 Asabe' El Mozzarella',
+    nameEn: '🧀 Asabe El Mozzarella',
     name: 'أصابع الموزاريلا',
     description: 'أصابع جبنة موزاريلا مقرمشة وغارقة في الجبن المطاطي اللذيذ',
     category: 'appetizers',
