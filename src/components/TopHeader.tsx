@@ -71,7 +71,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
             id="header-cart-btn"
             onClick={onOpenCart}
             aria-label="فتح السلة"
-            className="btn-burgundy btn-ripple relative flex min-h-11 items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-white hover:brightness-125 active:scale-95 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#E3B75B]
+            className="btn-burgundy btn-ripple relative flex min-h-11 items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl text-white hover:brightness-125 active:scale-95 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#E3B75B]"
           >
             <ShoppingBag className="w-4 h-4 text-amber-300" />
             <div className="flex items-center gap-1.5 text-xs sm:text-sm font-bold">
