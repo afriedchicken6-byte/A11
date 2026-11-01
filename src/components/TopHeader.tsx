@@ -17,7 +17,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
 }) => {
   return (
     <header className="sticky top-0 z-30 w-full bg-[#050506]/80 backdrop-blur-xl border-b border-[#E3B75B]/15 px-3 sm:px-6 py-2.5 transition-all shadow-[0_8px_30px_-12px_rgba(0,0,0,0.9)]">
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
+      <div className="max-w-7xl mx-auto grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 sm:gap-4">
         {/* Brand Lockup (scrolls back to the top of the menu) */}
         <button
           onClick={onGoHome}
@@ -40,20 +40,20 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
           </div>
         </button>
 
-        {/* Actions: Call & Cart */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          {/* Facebook page */}
-          <a
-            href={RESTAURANT_INFO.facebookUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            title="صفحتنا على فيسبوك"
-            aria-label="صفحتنا على فيسبوك"
-            className="p-2 rounded-lg bg-[#1877F2]/10 border border-[#1877F2]/30 text-[#1877F2] hover:bg-[#1877F2]/20 transition-colors"
-          >
-            <Facebook className="w-4 h-4" />
-          </a>
+        {/* Facebook page centered in the header */}
+        <a
+          href={RESTAURANT_INFO.facebookUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          title="صفحتنا على فيسبوك"
+          aria-label="صفحتنا على فيسبوك"
+          className="justify-self-center p-2 rounded-lg bg-[#1877F2]/10 border border-[#1877F2]/30 text-[#1877F2] hover:bg-[#1877F2]/20 transition-colors"
+        >
+          <Facebook className="w-4 h-4" />
+        </a>
 
+        {/* Actions: Call & Cart */}
+        <div className="justify-self-end flex items-center gap-2 sm:gap-3 shrink-0">
           {/* Quick Call */}
           <a
             href={`tel:${RESTAURANT_INFO.phone}`}
