@@ -96,7 +96,7 @@ export const MENU_ITEMS: MenuItem[] = [
   // 1) وجبات الكرسبي
   {
     id: 'crispy-quarter',
-    nameEn: '🍗 Crispy Chicken Meal',
+    nameEn: '🍗 Quarter-Kilo Crispy Chicken',
     name: 'ربع كيلو كرسبي',
     description: 'قطعتان كرسبي ذهبي + بطاطس مقرمشة + قطعتان خبز طازج + سلطة كول سلو',
     category: 'crispy-meals',
@@ -106,7 +106,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: 'crispy-half',
-    nameEn: '🍗 Crispy Chicken Meal',
+    nameEn: '🍗 Half-Kilo Crispy Chicken',
     name: 'نصف كيلو كرسبي',
     description: '5 قطع كرسبي مقرمش + بطاطس عائلية + 4 قطع خبز طازج + 2 سلطة كول سلو',
     category: 'crispy-meals',
@@ -116,7 +116,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: 'crispy-kilo',
-    nameEn: '🍗 Crispy Chicken Meal',
+    nameEn: '🍗 One-Kilo Crispy Chicken',
     name: 'كيلو كرسبي',
     description: '10 قطع كرسبي عملاقة + بطاطس لارج + 8 قطع خبز طازج + 2 كول سلو + 2 صوص مجاناً من اختيارك',
     category: 'crispy-meals',
@@ -189,7 +189,7 @@ export const MENU_ITEMS: MenuItem[] = [
   // 3) ساندوتشات البرجر والدجاج
   {
     id: 'golden-sweet',
-    nameEn: '🍔 Golden Sweet',
+    nameEn: '🍔 Golden Sweet Sandwich',
     name: 'ساندوتش جولدن سويت',
     description: 'خس طازج، خيار مخلل، صدور دجاج متبلة بخلطة A1، إصبعان موزاريلا، صوص سويت تشيلي مميز، صوص شيدر سايح',
     category: 'burgers-sandwiches',
@@ -203,7 +203,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: 'golden-royal',
-    nameEn: '👑 Golden Royal',
+    nameEn: '👑 Golden Royal Sandwich',
     name: 'ساندوتش جولدن رويال',
     description: 'خس، خيار مخلل، صدور دجاج بخلطة A1، هوت دوج مشوي، صوص ماك رويال الفاخر، صوص شيدر غني',
     category: 'burgers-sandwiches',
@@ -216,7 +216,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: 'miami-steaks',
-    nameEn: '🥪 Miami Steaks',
+    nameEn: '🥪 Miami Steaks Sandwich',
     name: 'ساندوتش ميامي ستيكس',
     description: 'خس، خيار مخلل، صدور دجاج بخلطة A1، أصابع موزاريلا ذهبية، مايونيز، صوص شيدر أصلي',
     category: 'burgers-sandwiches',
@@ -225,7 +225,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: 'texas-bbq',
-    nameEn: '🔥 Texas BBQ',
+    nameEn: '🔥 Texas BBQ Sandwich',
     name: 'ساندوتش باربكيو تكساس',
     description: 'خس، خيار مخلل، صدور دجاج بخلطة A1، شريحة بيكون مدخن، صوص شيدر، صوص باربكيو سموكي',
     category: 'burgers-sandwiches',
