@@ -220,8 +220,12 @@ export const MENU_ITEMS: MenuItem[] = [
     name: 'ساندوتش ميامي ستيكس',
     description: 'خس، خيار مخلل، صدور دجاج بخلطة A1، أصابع موزاريلا ذهبية، مايونيز، صوص شيدر أصلي',
     category: 'burgers-sandwiches',
-    isAvailable: false, // لم يحدد السعر بعد
-    badges: ['قريباً']
+    isAvailable: true,
+    options: [
+      { id: 'single', name: 'سنجل (Single)', price: 130 },
+      { id: 'double', name: 'دبل (Double)', price: 175 }
+    ],
+    defaultOptionId: 'single'
   },
   {
     id: 'texas-bbq',
@@ -229,8 +233,12 @@ export const MENU_ITEMS: MenuItem[] = [
     name: 'ساندوتش باربكيو تكساس',
     description: 'خس، خيار مخلل، صدور دجاج بخلطة A1، شريحة بيكون مدخن، صوص شيدر، صوص باربكيو سموكي',
     category: 'burgers-sandwiches',
-    isAvailable: false, // لم يحدد السعر بعد
-    badges: ['قريباً']
+    isAvailable: true,
+    options: [
+      { id: 'single', name: 'سنجل (Single)', price: 115 },
+      { id: 'double', name: 'دبل (Double)', price: 155 }
+    ],
+    defaultOptionId: 'single'
   },
   {
     id: 'pro-max-a1',
