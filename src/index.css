@@ -491,3 +491,10 @@
     transform: none;
   }
 }
+
+
+@media (max-width: 640px) {
+  .gold-text { animation: none; background-position: center; }
+  .luxe-card { will-change: auto; }
+  .lux-orb { filter: blur(55px); opacity: .42; }
+}
