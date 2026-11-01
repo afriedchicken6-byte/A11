@@ -22,7 +22,6 @@ import type { SuccessOrderData } from './components/OrderSuccessModal';
 import { RestaurantFooter } from './components/RestaurantFooter';
 import { LuxuryBackground } from './components/LuxuryBackground';
 import { Reveal } from './components/Reveal';
-import { SpaceChick } from './components/SpaceChick';
 import { db, doc, onSnapshot } from './lib/firebase';
 import { flyToCart, initRipple, vibrate } from './lib/interactions';
 
@@ -248,7 +247,6 @@ export default function App() {
 
   return (
     <div className="min-h-screen text-white relative">
-      <SpaceChick />
       {/* Dark luxury backdrop: obsidian + burgundy/gold glows + embers */}
       <LuxuryBackground imageUrl={RESTAURANT_INFO.heroBgUrl} />
 
