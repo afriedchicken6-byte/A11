@@ -26,7 +26,7 @@ export const CategoryRibbons: React.FC<CategoryRibbonsProps> = ({
   }, [activeCategory]);
 
   return (
-    <div className="sticky top-[57px] z-20 w-full bg-[#050506]/80 backdrop-blur-xl border-b border-[#E3B75B]/10 py-2.5 shadow-sm">
+    <div className="sticky top-14 sm:top-[65px] z-20 w-full bg-[#050506]/80 backdrop-blur-xl border-b border-[#E3B75B]/10 py-2.5 shadow-sm">
       <div
         ref={containerRef}
         className="max-w-7xl mx-auto px-4 flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth"
@@ -39,7 +39,8 @@ export const CategoryRibbons: React.FC<CategoryRibbonsProps> = ({
               key={cat.id}
               data-cat-id={cat.id}
               onClick={() => onSelectCategory(cat.id)}
-              className={`btn-ripple shrink-0 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-all duration-200 ${
+              aria-current={isActive ? 'location' : undefined}
+              className={`btn-ripple shrink-0 min-h-11 px-3 sm:px-4 py-2.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-all duration-200 ${
                 isActive
                   ? 'btn-burgundy text-white scale-105'
                   : 'bg-white/[0.03] text-stone-300 hover:text-white hover:bg-white/[0.07] border border-[#E3B75B]/15 hover:border-[#E3B75B]/40'
