@@ -96,7 +96,7 @@ export const MENU_ITEMS: MenuItem[] = [
   // 1) وجبات الكرسبي
   {
     id: 'crispy-quarter',
-    nameEn: '🍗 Crispy Chicken Meal',
+    nameEn: '🍗 Crispy Chicken',
     name: 'ربع كيلو كرسبي',
     description: 'قطعتان كرسبي ذهبي + بطاطس مقرمشة + قطعتان خبز طازج + سلطة كول سلو',
     category: 'crispy-meals',
@@ -106,7 +106,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: 'crispy-half',
-    nameEn: '🍗 Crispy Chicken Meal',
+    nameEn: '🍗 Crispy Chicken',
     name: 'نصف كيلو كرسبي',
     description: '5 قطع كرسبي مقرمش + بطاطس عائلية + 4 قطع خبز طازج + 2 سلطة كول سلو',
     category: 'crispy-meals',
@@ -116,7 +116,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: 'crispy-kilo',
-    nameEn: '🍗 Crispy Chicken Meal',
+    nameEn: '🍗 Crispy Chicken',
     name: 'كيلو كرسبي',
     description: '10 قطع كرسبي عملاقة + بطاطس لارج + 8 قطع خبز طازج + 2 كول سلو + 2 صوص مجاناً من اختيارك',
     category: 'crispy-meals',
@@ -167,7 +167,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: 'tawfeer-meal',
-    nameEn: '🍗 Value Meal',
+    nameEn: '🍗 Wegbet El Tawfeer',
     name: 'وجبة التوفير',
     description: '12 قطعة دجاج مقرمش غني + بطاطس عائلية + 9 قطع خبز طازج + لتر بيبسي بارد منعش',
     category: 'chicken-meals',
@@ -177,7 +177,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: 'economy-meal',
-    nameEn: '🍗 Economy Meal',
+    nameEn: '🍗 El Wagba El Ektesadeya',
     name: 'الوجبة الاقتصادية',
     description: '18 قطعة دجاج مقرمش عائلي + بطاطس لارج + 12 قطعة خبز طازج + 2 سلطة كول سلو كبير',
     category: 'chicken-meals',
@@ -189,7 +189,7 @@ export const MENU_ITEMS: MenuItem[] = [
   // 3) ساندوتشات البرجر والدجاج
   {
     id: 'golden-sweet',
-    nameEn: '🍔 Golden Sweet',
+    nameEn: '🍔 Golden Sweet Sandwich',
     name: 'ساندوتش جولدن سويت',
     description: 'خس طازج، خيار مخلل، صدور دجاج متبلة بخلطة A1، إصبعان موزاريلا، صوص سويت تشيلي مميز، صوص شيدر سايح',
     category: 'burgers-sandwiches',
@@ -203,7 +203,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: 'golden-royal',
-    nameEn: '👑 Golden Royal',
+    nameEn: '👑 Golden Royal Sandwich',
     name: 'ساندوتش جولدن رويال',
     description: 'خس، خيار مخلل، صدور دجاج بخلطة A1، هوت دوج مشوي، صوص ماك رويال الفاخر، صوص شيدر غني',
     category: 'burgers-sandwiches',
@@ -216,7 +216,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: 'miami-steaks',
-    nameEn: '🥪 Miami Steaks',
+    nameEn: '🥪 Miami Steaks Sandwich',
     name: 'ساندوتش ميامي ستيكس',
     description: 'خس، خيار مخلل، صدور دجاج بخلطة A1، أصابع موزاريلا ذهبية، مايونيز، صوص شيدر أصلي',
     category: 'burgers-sandwiches',
@@ -225,7 +225,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: 'texas-bbq',
-    nameEn: '🔥 Texas BBQ',
+    nameEn: '🔥 Texas BBQ Sandwich',
     name: 'ساندوتش باربكيو تكساس',
     description: 'خس، خيار مخلل، صدور دجاج بخلطة A1، شريحة بيكون مدخن، صوص شيدر، صوص باربكيو سموكي',
     category: 'burgers-sandwiches',
@@ -306,7 +306,7 @@ export const MENU_ITEMS: MenuItem[] = [
   // 5) المقبلات والإضافات
   {
     id: 'onion-rings',
-    nameEn: '🧅 Crispy Onion Rings',
+    nameEn: '🧅 Halaqat El Basal El MoqarmaSha',
     name: 'حلقات البصل المقرمشة',
     description: 'حلقات بصل مقلية ذهبية مقرمشة تقدم ساخنة مع البهارات الخاصة',
     category: 'appetizers',
@@ -315,7 +315,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: 'mozzarella-sticks',
-    nameEn: '🧀 Mozzarella Sticks',
+    nameEn: '🧀 Asabe' El Mozzarella',
     name: 'أصابع الموزاريلا',
     description: 'أصابع جبنة موزاريلا مقرمشة وغارقة في الجبن المطاطي اللذيذ',
     category: 'appetizers',
@@ -325,7 +325,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: 'coleslaw-salad',
-    nameEn: '🥗 Coleslaw Salad',
+    nameEn: '🥗 Salatet Coleslaw',
     name: 'سلطة كول سلو',
     description: 'سلطة كرنب وجزر طازجة بالدريسنج الغني الحلو والمنعش',
     category: 'appetizers',
@@ -334,7 +334,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: 'cheese-jar',
-    nameEn: '🫕 Cheese Sauce',
+    nameEn: '🫕 Bortoman El Gebna El Sayla',
     name: 'برطمان الجبن السائل',
     description: 'برطمان صوص شيدر غني وساخن للتغميس والغرق بالجبنة',
     category: 'appetizers',
@@ -346,7 +346,7 @@ export const MENU_ITEMS: MenuItem[] = [
   // 6) الصوصات (صغير 20 ج / كبير 35 ج)
   {
     id: 'sauce-cheese',
-    nameEn: '🧀 Cheddar Cheese Sauce',
+    nameEn: '🧀 Sos El Gebna El Cheddar',
     name: 'صوص الجبن الشيدر',
     description: 'صوص جبن شيدر كريمي أصلي دافئ وغني بالنكهة',
     category: 'sauces',
@@ -359,7 +359,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: 'sauce-ranch',
-    nameEn: '🥣 Signature Ranch Sauce',
+    nameEn: '🥣 Sos El Ranch El Momayaz',
     name: 'صوص الرانش المميز',
     description: 'صلصة رانش كريمية بالأعشاب والليمون المنعش',
     category: 'sauces',
@@ -372,7 +372,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: 'sauce-sweet-chili',
-    nameEn: '🌶️ Sweet Chili Sauce',
+    nameEn: '🌶️ Sos El Sweet Chili',
     name: 'صوص السويت تشيلي',
     description: 'مزيج رائع بين الحلاوة والحرارة الممتعة',
     category: 'sauces',
@@ -385,7 +385,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: 'sauce-bbq',
-    nameEn: '🔥 Smoky BBQ Sauce',
+    nameEn: '🔥 Sos El Barbecue El Modakhan',
     name: 'صوص الباربكيو المدخن',
     description: 'نكهة سموكي مدخنة حقيقية مع قوام غني',
     category: 'sauces',
@@ -398,7 +398,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: 'sauce-thousand-island',
-    nameEn: '🥣 Thousand Island Sauce',
+    nameEn: '🥣 Sos El Alf Gezira',
     name: 'صوص الألف جزيرة',
     description: 'صوص كلاسيكي غني بالخيار المخلل والمايونيز الخاص',
     category: 'sauces',
@@ -411,7 +411,7 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   {
     id: 'sauce-big-tasty',
-    nameEn: '🍔 Big Tasty Sauce',
+    nameEn: '🍔 Sos Big Tasty',
     name: 'صوص بيج تايستي',
     description: 'صوص بيج تايستي الأسطوري بنكهته المدخنة الفريدة',
     category: 'sauces',
