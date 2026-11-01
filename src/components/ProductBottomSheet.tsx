@@ -99,7 +99,7 @@ export const ProductBottomSheet: React.FC<ProductBottomSheetProps> = ({
         <div className="flex items-center justify-between px-5 pt-3 pb-3 border-b border-stone-800">
           <div className="text-right">
             <h2 className="text-lg sm:text-xl font-bold text-white">
-              <span dir="ltr" className="block text-left text-base sm:text-lg">{item.nameEn}</span>
+              <span dir="ltr" className="block text-left text-base sm:text-lg gold-text font-extrabold">{item.nameEn}</span>
               <span className="block">{item.name}</span>
             </h2>
             <span className="text-xs text-amber-400 font-medium">تخصيص الوجبة والإضافات</span>
