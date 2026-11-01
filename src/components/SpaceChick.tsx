@@ -29,6 +29,9 @@ const styles = [
   '.space-chick--intro .space-chick__wing--right{animation:wing-like 9.5s ease-in-out both}',
   '@keyframes wing-balance{0%,100%{transform:rotate(0)}35%{transform:rotate(-32deg)}65%{transform:rotate(24deg)}}',
   '@keyframes wing-like{0%,30%,100%{transform:rotate(0)}34%{transform:rotate(-22deg)}37%{transform:rotate(-55deg)}42%{transform:rotate(-18deg)}57%{transform:rotate(-10deg)}62%{transform:rotate(-35deg)}66%,70%{transform:rotate(-54deg)}74%{transform:rotate(-12deg)}}',
+  '.space-chick__thumb{opacity:0;transform-box:fill-box;transform-origin:center}',
+  '.space-chick--intro .space-chick__thumb{animation:thumb-mission 9.5s ease-in-out both}',
+  '@keyframes thumb-mission{0%,30%,47%,62%,75%,100%{opacity:0}34%,43%,66%,71%{opacity:1;transform:translateY(-3px) rotate(-12deg) scale(1.12)}}',
   '.space-chick__eye-lid{opacity:0;transform-box:fill-box;transform-origin:center}',
   '.space-chick--intro .space-chick__eye-lid--right{animation:eye-wink 9.5s ease-in-out both}',
   '@keyframes eye-wink{0%,20%,29%,100%{opacity:0;transform:scaleY(0)}23%,27%{opacity:1;transform:scaleY(1)}}',
@@ -75,6 +78,10 @@ const styles = [
   '.space-chick--cheer .space-chick__button-core{filter:drop-shadow(0 0 12px #ffe07a)}',
   '@keyframes cheer-bounce{35%{transform:translateY(-4px) rotate(-4deg) scale(1.06)}70%{transform:translateY(0) rotate(3deg) scale(.98)}}',
   '@keyframes cheer-wing{50%{transform:rotate(-48deg)}}',
+  '.space-chick--cheer .space-chick__thumb{opacity:1;animation:thumb-pop .48s ease-out both}',
+  '@keyframes thumb-pop{50%{transform:translateY(-3px) rotate(-12deg) scale(1.14)}}',
+  '.space-chick--cheer .space-chick__eye-lid--right{animation:cheer-wink .42s ease-in-out both}',
+  '@keyframes cheer-wink{0%,100%{opacity:0;transform:scaleY(0)}25%,75%{opacity:1;transform:scaleY(1)}}',
   '.space-chick__bubble{position:absolute;left:-1px;bottom:calc(100% + 2px);padding:7px 10px;border:1px solid rgba(227,183,91,.75);border-radius:12px 12px 12px 3px;background:rgba(17,10,13,.96);color:#f7d57e;font-size:12px;font-weight:800;white-space:nowrap;box-shadow:0 5px 18px rgba(0,0,0,.3),0 0 14px rgba(227,183,91,.15);animation:bubble-in .18s ease-out both}',
   '@keyframes bubble-in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}',
   '@media(prefers-reduced-motion:reduce){.space-chick__sparkle,.space-chick__tuft,.space-chick__eye-lid--settled,.space-chick__chick-svg{animation:none!important}.space-chick--intro .space-chick__chick,.space-chick--intro .space-chick__rocket,.space-chick--intro .space-chick__ladder{animation:none!important;opacity:0!important}.space-chick__skip{display:none}}'
@@ -112,7 +119,7 @@ function ChickArt({ mini = false }: { mini?: boolean }) {
       <g className="space-chick__wing space-chick__wing--right">
         <path d="M131 124q17 2 22 17l7 15q2 8-6 11l-14 3-17-29Z" fill="url(#sc-feather)" stroke="#cb8e25" strokeWidth="2" />
         <path d="M151 149l8 11-13-2m-4-13 8 14-15-3" fill="#f3bb42" stroke="#da9630" strokeWidth="2" strokeLinejoin="round" />
-        <text x="163" y="137" fontSize="17" opacity="0">👍</text>
+        <text className="space-chick__thumb" x="160" y="137" fontSize="17">👍</text>
       </g>
       <path d="M53 119q5-12 19-14h36q14 2 19 14l8 44q1 10-10 11H55q-11-1-10-11Z" fill="url(#sc-suit)" stroke="#d8d9dd" strokeWidth="4" />
       <path d="M64 110q26 13 52 0l-4 13q-22 11-44 0Z" fill="#f2eee6" stroke="#afb2b8" strokeWidth="2" />
